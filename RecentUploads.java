@@ -1,0 +1,198 @@
+
+/**
+ * @author Jayden Weaver
+ */
+
+import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+
+/*
+ * Fetches, parses, and displays Photobucket's recent uploads. Very basic, very messy, somewhat slow, and thrown together very quickly. 
+ * However, it can still be very useful. This class provides a basic framework for what will eventually be a nice program.
+ * This utilizes JSoup for grabbing the recent uploads page, and the urls for the pages the images are on.
+ * However, due to the way Photobucket handles their photos JSoup would not work for getting the direct links to the images.
+ * Because of this, a URL, input stream, and buffered reader were used for the second half of this program...in case you were wondering.
+ * The program does have a few faults, which will be addressed in future updates.
+ */
+public class RecentUploads {
+
+	public static void main(String[] args) {
+		// URL to get
+		String URL = "http://www.photobucket.com/recentuploads?page=1";
+		try {
+			// Get entire document
+			org.jsoup.nodes.Document photobucket = Jsoup.connect(URL).get();
+
+			// Put document into an element
+			Elements photo = photobucket.getElementsByTag("script");
+
+			// Get only the section we want, put it into an element of its own.
+			Element script = photo.get(photo.size() - 11);
+
+			// Put the section into a string we can manipulate.
+			String selection = script.toString();
+
+			// now the hard part....parsing through...by hand......RIP me.
+
+			// we'll need a string builder
+			StringBuilder losLinks = new StringBuilder();
+			boolean isLink = false;
+			ArrayList<String> linkArray = new ArrayList<String>();
+
+			// loop.
+			char prev = 'a', current = 'a';
+			for (char ch : selection.toCharArray()) {
+				current = ch;
+				if (current == 'U' && prev == '[') {
+					isLink = true;
+				}
+
+				if (isLink) {
+					losLinks.append(current);
+
+					if (prev == 'l' && current == ']') {
+						isLink = false;
+						linkArray.add(losLinks.toString());
+						losLinks.delete(0, losLinks.length());
+					}
+
+				}
+
+				prev = ch;
+
+			}
+
+			// TODO: Make this work with all photos. Currently only gets the links for photos that aren't several folders deep. Mostly working though.
+			// This string will make parsing easier.
+			String parseEasy = "http://media.photobucket.com/user/";
+			String temp, finalString;
+			
+			for (int i = 0; i < linkArray.size(); i++) {
+				temp = linkArray.get(i);
+
+				temp = temp.substring(42, temp.length());
+				// We'll use this offset to cut the string again, to get the username only.
+				int offSet = 0; // no magic numbers here, no sir.
+				// reset our current and previous.
+				current = 'a';
+				prev = 'a';
+
+				for (char ch : temp.toCharArray()) {
+					current = ch;
+					if (current == '/' && prev == '\\') {
+						System.out.println(temp);
+						break;
+					}
+					prev = current;
+					offSet++;
+				}
+
+				// ok, now substring again.
+				String username = temp.substring(0, offSet - 1);
+				//concat
+				finalString = parseEasy + username + "/media";
+
+				// last thing. and i really should make a method for this. oh well. maybe later.
+				// reset current and previous
+				current = 'a';
+				prev = 'a';
+				// let's substring again.
+				temp = temp.substring(offSet + 7); // magic number, being the number of characters in /\media\ minus 1.
+				offSet = 0;
+				for (char ch : temp.toCharArray()) {
+					current = ch;
+					if (prev == '\\' && current == '/') {
+						break;
+					}
+					prev = current;
+					offSet++;
+				}
+				String albumAndOrPhoto = temp.substring(0, offSet - 1);
+
+				finalString += albumAndOrPhoto;
+				// Remember to add the final string to the string array for use later.
+				linkArray.set(i, finalString);
+				System.out.println(finalString);
+
+			}
+
+			// New array list for now, until the connection bug is fixed.
+			ArrayList<String> losLinksArray = new ArrayList<String>();
+			int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
+			for (int urls = 0; urls < linkArray.size(); urls++) {
+
+				if (linkArray.get(urls).substring(linkArray.get(urls).length() - 4, linkArray.get(urls).length()).equals("html")) {
+					linkCount++;
+					// before we can do a frame, we need to get the direct link to images. otherwise we're fucked.
+					// create url
+					URL url = new URL(linkArray.get(urls));
+					InputStream inStream = url.openStream();
+					BufferedReader bufRead = new BufferedReader(new InputStreamReader(inStream));
+					String directLink;
+					int lineCount = 0;
+					while (true) {
+						directLink = bufRead.readLine();
+						if (lineCount == 19) { // 19 is the magic number, the line the direct link to the image is on.
+							break;
+						}
+						lineCount++;
+					}
+
+					// now, parse..
+					directLink = directLink.substring(40, directLink.length() - 4);
+					losLinksArray.add(directLink);
+					System.out.println(directLink);
+				}
+
+			}
+			if (linkCount == 0){
+				System.err.println("No links were parsed! This is due to a parsing limitation in this version of code.");
+			}
+
+			// ok frame time.?
+			JFrame frame = new JFrame("Recent Uploads");
+			frame.setLayout(new GridLayout(6, 6));
+			int height = 0;
+			int width = 0;
+			// time to loop through to display images...
+			for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
+				URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
+				BufferedImage photoJoto = ImageIO.read(photoURL);
+				ImageIcon photoPendejo = new ImageIcon(photoJoto);
+				width = photoPendejo.getIconWidth();
+				height = photoPendejo.getIconHeight();
+				JLabel label = new JLabel(photoPendejo);
+				label.setSize(width, height);
+				// frame.getContentPane().add(label);
+				frame.add(label);
+				frame.pack();
+			}
+
+			frame.setSize(800, 800);
+			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			frame.setVisible(true);
+
+		} catch (IOException e) {
+			System.out.println("Connection Failure.");
+		}
+
+	}
+
+}
