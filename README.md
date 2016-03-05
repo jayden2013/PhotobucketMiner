@@ -3,4 +3,11 @@ Fetches, parses, and displays Photobucket's recent uploads. Very basic, very mes
 
 
 
-Usage: java RecentUploads
+Usage
+<hr>
+On Windows:
+<br>
+javac -classpath .;jsoup-1.8.3.jar RecentUploads.java
+<br>
+java -classpath .;jsoup-1.8.3.jar RecentUploads
+
