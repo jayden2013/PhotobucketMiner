@@ -6,6 +6,7 @@
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -83,6 +84,7 @@ public class RecentUploads {
 			// This string will make parsing easier.
 			String parseEasy = "http://media.photobucket.com/user/";
 			String temp, finalString;
+			ArrayList<String> usernameArray = new ArrayList<String>();
 			
 			for (int i = 0; i < linkArray.size(); i++) {
 				temp = linkArray.get(i);
@@ -97,7 +99,6 @@ public class RecentUploads {
 				for (char ch : temp.toCharArray()) {
 					current = ch;
 					if (current == '/' && prev == '\\') {
-						System.out.println(temp);
 						break;
 					}
 					prev = current;
@@ -106,6 +107,8 @@ public class RecentUploads {
 
 				// ok, now substring again.
 				String username = temp.substring(0, offSet - 1);
+				//add to username arraylist
+				usernameArray.add(username);
 				//concat
 				finalString = parseEasy + username + "/media";
 
@@ -171,6 +174,11 @@ public class RecentUploads {
 			frame.setLayout(new GridLayout(6, 6));
 			int height = 0;
 			int width = 0;
+			//For saving the photos.
+			int numeral = 0;
+			File outputFile, directory;
+			
+			
 			// time to loop through to display images...
 			for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
 				URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
@@ -183,6 +191,19 @@ public class RecentUploads {
 				// frame.getContentPane().add(label);
 				frame.add(label);
 				frame.pack();
+				
+				//save the photo - this assumes all photos are jpgs.
+				//assuming they are all jpgs is fine for jpgs and pngs.
+				//gifs too...they just won't animate.
+				//differentiation could come in an update.
+				directory = new File("saved\\");
+				directory.mkdir();
+				directory = new File("saved\\" + usernameArray.get(numeral) + "\\");
+				directory.mkdir();
+				outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg");
+				ImageIO.write(photoJoto, "jpg", outputFile);
+				numeral++;
+				
 			}
 
 			frame.setSize(800, 800);
