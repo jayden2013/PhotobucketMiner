@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -132,13 +133,14 @@ public class RecentUploads {
 				finalString += albumAndOrPhoto;
 				// Remember to add the final string to the string array for use later.
 				linkArray.set(i, finalString);
-				System.out.println(finalString);
+				//System.out.println(finalString);
 
 			}
 
 			// New array list for now, until the connection bug is fixed.
 			ArrayList<String> losLinksArray = new ArrayList<String>();
 			int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
+			DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
 			for (int urls = 0; urls < linkArray.size(); urls++) {
 
 				if (linkArray.get(urls).substring(linkArray.get(urls).length() - 4, linkArray.get(urls).length()).equals("html")) {
@@ -161,10 +163,12 @@ public class RecentUploads {
 					// now, parse..
 					directLink = directLink.substring(40, directLink.length() - 4);
 					losLinksArray.add(directLink);
-					System.out.println(directLink);
+					//System.out.println(directLink);
+					
 				}
-
+				System.out.println(df.format((double)(urls / (double) linkArray.size()) * 100) + "% Complete.");
 			}
+			System.out.println("100.00% Complete.");
 			if (linkCount == 0){
 				System.err.println("No links were parsed! This is due to a parsing limitation in this version of code.");
 			}
