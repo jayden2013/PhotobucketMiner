@@ -170,7 +170,8 @@ public class RecentUploads {
 			}
 			System.out.println("100.00% Complete.");
 			if (linkCount == 0){
-				System.err.println("No links were parsed! This is due to a parsing limitation in this version of code.");
+				System.err.println("No links were parsed! This is due to a parsing limitation in this version of code."); //Limitation: can't get images inside of directories. Requires more parsing.
+				return; //Don't bother loading a frame if no links were parsed.
 			}
 
 			// ok frame time.?
@@ -204,10 +205,9 @@ public class RecentUploads {
 				directory.mkdir();
 				directory = new File("saved\\" + usernameArray.get(numeral) + "\\");
 				directory.mkdir();
-				outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg");
+				outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg"); //TODO: Add ability to save photos in directories to same directory inside of username locally.
 				ImageIO.write(photoJoto, "jpg", outputFile);
 				numeral++;
-				
 			}
 
 			frame.setSize(800, 800);
