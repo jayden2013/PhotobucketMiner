@@ -31,7 +31,6 @@ import org.jsoup.select.Elements;
  * This utilizes JSoup for grabbing the recent uploads page, and the urls for the pages the images are on.
  * However, due to the way Photobucket handles their photos JSoup would not work for getting the direct links to the images.
  * Because of this, a URL, input stream, and buffered reader were used for the second half of this program...in case you were wondering.
- * The program does have a few faults, which will be addressed in future updates.
  */
 public class RecentUploads {
 
