@@ -119,6 +119,7 @@ public class RecentUploads {
 				prev = 'a';
 				// let's substring again.
 				temp = temp.substring(offSet + 7); // magic number, being the number of characters in /\media\ minus 1.
+			//	System.out.println("TEMP: " + temp);
 				offSet = 0;
 				for (char ch : temp.toCharArray()) {
 					current = ch;
@@ -129,7 +130,7 @@ public class RecentUploads {
 					offSet++;
 				}
 				String albumAndOrPhoto = temp.substring(0, offSet - 1);
-
+			//	System.out.println(albumAndOrPhoto);
 				finalString += albumAndOrPhoto;
 				// Remember to add the final string to the string array for use later.
 				linkArray.set(i, finalString);
@@ -141,6 +142,7 @@ public class RecentUploads {
 			ArrayList<String> losLinksArray = new ArrayList<String>();
 			int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
 			DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
+			ArrayList<String> profileLinkArray = new ArrayList<String>(); //for profile links
 			for (int urls = 0; urls < linkArray.size(); urls++) {
 
 				if (linkArray.get(urls).substring(linkArray.get(urls).length() - 4, linkArray.get(urls).length()).equals("html")) {
@@ -164,14 +166,34 @@ public class RecentUploads {
 					directLink = directLink.substring(40, directLink.length() - 4);
 					losLinksArray.add(directLink);
 					//System.out.println(directLink);
+					String profileLink = directLink.substring(7, 13);
+					if (profileLink.endsWith("p")){
+						profileLink = profileLink.substring(0, profileLink.length() - 1);
+					}
+					
+					profileLink += "photobucket.com/" + "user/" + usernameArray.get(urls) + "/library/"; // parse the url to the user's profile. this can be used later on to download all of the user's photos.
+					//until then, we will display the link after we're done.
+					//add to an arraylist
+					profileLinkArray.add(profileLink);
 					
 				}
+				else{ //if the photo is in a folder, reparse.s
+					
+				}				
+				
 				System.out.println(df.format((double)(urls / (double) linkArray.size()) * 100) + "% Complete.");
 			}
 			System.out.println("100.00% Complete.");
 			if (linkCount == 0){
 				System.err.println("No links were parsed! This is due to a parsing limitation in this version of code."); //Limitation: can't get images inside of directories. Requires more parsing.
+				System.err.println("No GUI will be loaded.");
 				return; //Don't bother loading a frame if no links were parsed.
+			}
+			
+			//Print all of the profile links.
+			System.out.println("Profile Links: ");
+			for (int k = 0; k < profileLinkArray.size(); k++){
+				System.out.println(profileLinkArray.get(k));				
 			}
 
 			// ok frame time.?
