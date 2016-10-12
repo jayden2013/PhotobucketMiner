@@ -17,10 +17,10 @@ On Windows:
 <br>
 javac -classpath .;jsoup-1.8.3.jar RecentUploads.java
 <br>
-java -classpath .;jsoup-1.8.3.jar RecentUploads <number of pages to parse>
+java -classpath .;jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
 
 Linux / Mac OS:
 <br>
 javac -classpath .:jsoup-1.8.3.jar RecentUploads.java
 <br>
-java -classpath .:jsoup-1.8.3.jar RecentUploads <number of pages to parse>
+java -classpath .:jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
