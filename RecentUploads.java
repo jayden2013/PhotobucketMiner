@@ -39,7 +39,15 @@ public class RecentUploads {
 			return;
 		}
 		int pageNumber = 1; //initial page number.
-		int numberOfPages = Integer.parseInt(args[0]); //number of pages to parse.
+		int numberOfPages = 0;
+		try{
+			numberOfPages = Integer.parseInt(args[0]); //number of pages to parse.
+		}
+		catch(NumberFormatException e){
+			System.err.println("Enter a number, dumbass.\n");
+			System.err.println(usage());
+			return;
+		}
 		while(pageNumber <= numberOfPages){
 			// URL to get
 			String URL = "http://www.photobucket.com/recentuploads?page=" + pageNumber;
@@ -170,10 +178,13 @@ public class RecentUploads {
 						// now, parse..
 						directLink = directLink.substring(40, directLink.length() - 4);
 						losLinksArray.add(directLink);
-						//System.out.println(directLink);
+						System.out.println(directLink);
 						String profileLink = directLink.substring(7, 13);
 						if (profileLink.endsWith("p")){
 							profileLink = profileLink.substring(0, profileLink.length() - 1);
+						}
+						else if (profileLink.endsWith("h")){ //This is to fix the problem where links with a shorter string of characters before the domain name would become corrupted. 
+							profileLink = profileLink.substring(0, profileLink.length() - 2);
 						}
 
 						profileLink += "photobucket.com/" + "user/" + usernameArray.get(urls) + "/library/"; // parse the url to the user's profile. this can be used later on to download all of the user's photos.
@@ -183,10 +194,10 @@ public class RecentUploads {
 
 					}
 					else{ //if the photo is in a folder, reparse.s
-
+						//TODO
 					}				
 
-				//	System.out.println("Page " + pageNumber + ": " + df.format((double)(urls / (double) linkArray.size()) * 100) + "% Complete.");
+					//	System.out.println("Page " + pageNumber + ": " + df.format((double)(urls / (double) linkArray.size()) * 100) + "% Complete.");
 				}
 				//System.out.println("Page " + pageNumber + ": 100.00% Complete.");
 				if (linkCount == 0){
@@ -238,20 +249,22 @@ public class RecentUploads {
 				}
 
 				frame.setSize(800, 800);
-				frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				if (pageNumber == numberOfPages){ //only allow the pop up window to stop the entire program if it's the last one.
+					frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+				}
 				frame.setVisible(true);
 
-
 			} catch (IOException e) {
-				System.out.println("Connection Failure.");
+				System.err.println("Connection Failure.");
 			}
+
 			pageNumber++;
 		}
 
 	}
 
 	private static String usage(){
-		return "Windows: \n "
+		return "Windows: \n"
 				+ "java -classpath .;jsoup-1.8.3.jar RecentUploads <number of pages to parse>\n" + 
 				"Linux / Mac OS: \n" + "java -classpath .:jsoup-1.8.3.jar RecentUploads <number of pages to parse>";
 	}
