@@ -30,7 +30,7 @@ public class User {
 	public User(String url) {
 		this.userURL += url;
 	}
-	
+
 	public void setUsername(String un){
 		this.username = un;
 	}
@@ -142,23 +142,29 @@ public class User {
 			for (String s : photoLinkList){
 				System.out.println(s);
 			}
+
 			
-			//Begin Saving Files.
-			File outputFile, directory;
-			int numeral = 0;
-			for (String s : photoLinkList){
-				URL photoURL = new URL(s);
-				BufferedImage photoJoto = ImageIO.read(photoURL); //exception thrown here.
-				directory = new File("Saved_Users\\");
-				directory.mkdir();
-				directory = new File("Saved_Users\\" + this.username + "\\");
-				directory.mkdir();
-				outputFile = new File("Saved_Users\\" + this.username + "\\" + numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
-				ImageIO.write(photoJoto,"jpg", outputFile);
-				numeral++;
-				
-				System.out.println(s);
-			}
+				//Begin Saving Files.
+				File outputFile, directory;
+				int numeral = 0;
+				for (String s : photoLinkList){
+					URL photoURL = new URL(s);
+					try{
+					BufferedImage photoJoto = ImageIO.read(photoURL);
+					directory = new File("Saved_Users\\");
+					directory.mkdir();
+					directory = new File("Saved_Users\\" + this.username + "\\");
+					directory.mkdir();
+					outputFile = new File("Saved_Users\\" + this.username + "\\" + numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
+					ImageIO.write(photoJoto,"jpg", outputFile);
+					numeral++;
+
+					System.out.println(s);
+					} catch(Exception e){
+						System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
+					}
+				}
+
 
 			//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
 			//TODO: Use a string builder because it would be faster.
