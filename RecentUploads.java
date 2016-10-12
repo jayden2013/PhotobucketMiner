@@ -221,7 +221,6 @@ public class RecentUploads {
 				int numeral = 0;
 				File outputFile, directory;
 
-
 				// time to loop through to display images...
 				for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
 					URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
@@ -252,7 +251,14 @@ public class RecentUploads {
 				if (pageNumber == numberOfPages){ //only allow the pop up window to stop the entire program if it's the last one.
 					frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				}
-				frame.setVisible(true);
+				//frame.setVisible(true); //commented out for testing during class.
+				int i = 0;
+				for (String profileLink : profileLinkArray){
+					User user = new User(profileLink); //TODO: Purge doubles.
+					user.setUsername(usernameArray.get(i));
+					//System.out.println(user.getUserURL());
+					user.parseUser();
+				}
 
 			} catch (IOException e) {
 				System.err.println("Connection Failure.");
