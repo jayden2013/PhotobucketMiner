@@ -157,6 +157,7 @@ public class RecentUploads {
 				int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
 				DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
 				ArrayList<String> profileLinkArray = new ArrayList<String>(); //for profile links
+				ArrayList<String> newUserArray = new ArrayList<String>(); //a new arraylist for usernames
 				for (int urls = 0; urls < linkArray.size(); urls++) {
 
 					if (linkArray.get(urls).substring(linkArray.get(urls).length() - 4, linkArray.get(urls).length()).equals("html")) {
@@ -192,7 +193,7 @@ public class RecentUploads {
 						//until then, we will display the link after we're done.
 						//add to an arraylist
 						profileLinkArray.add(profileLink);
-
+						newUserArray.add(usernameArray.get(urls));
 					}
 					else{ //if the photo is in a folder, reparse.s
 						//TODO
@@ -254,10 +255,23 @@ public class RecentUploads {
 				}
 				//frame.setVisible(true); //commented out for testing during class.
 				int i = 0;
+				ArrayList<String> oldProfileLinkArray = new ArrayList<String>();
+				boolean purge = false;
 				for (String profileLink : profileLinkArray){
-					User user = new User(profileLink); //TODO: Purge doubles.
-					user.setUsername(usernameArray.get(i));
-					user.parseUser();
+					purge = false;
+					User user = new User(profileLink);
+					user.setUsername(newUserArray.get(i));
+					for (String oldProfileLink : oldProfileLinkArray){
+						if (oldProfileLink.equals(profileLink)){
+							purge = true;
+							System.out.println("USER ALREADY PARSED! PURGED!");
+						}
+					}
+					if (!purge){
+						user.parseUser();
+					}
+					//keep track of profiles we've already parsed.
+					oldProfileLinkArray.add(profileLink);
 					i++;
 				}
 

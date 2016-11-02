@@ -77,10 +77,8 @@ public class User {
 
 		try {
 			//Get entire photobucket page.
-			System.out.println("trying..");
 			//Need a user agent in order to get the redirect from photobucket.
 			Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").get();
-			System.out.println("good..");
 			//get all the script tags and put them in the element.
 			Elements photo = photobucketDocument.getElementsByTag("script");
 			Element script = photo.get(photo.size() - 26); //Magic number. Photobucket loves to change this, but as of 11/2016 this is the offset. 
@@ -120,8 +118,6 @@ public class User {
 								//TODO: add the differentiation upon saving the file, that way it's easier. 
 								photoLinkList.add(imageURL);
 							}
-							System.out.println(imageURL);
-
 							break;
 						}
 						counter++;
@@ -156,6 +152,7 @@ public class User {
 					System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
 				}
 			}
+			System.out.println("done");
 			return; //this return is what fixes part of the username bug, where all photos were saved in the same folder, and overwrote each other.
 
 			//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
