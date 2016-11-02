@@ -26,6 +26,7 @@ public class User {
 	private ArrayList<String> imageURLs = new ArrayList<String>();
 	private String userURL = "http://";
 	private String username = "";
+	private int numeral = 0;
 
 	public User(String url) {
 		this.userURL += url;
@@ -82,7 +83,7 @@ public class User {
 			System.out.println("good..");
 			//get all the script tags and put them in the element.
 			Elements photo = photobucketDocument.getElementsByTag("script");
-			Element script = photo.get(photo.size() - 25); //Magic number.
+			Element script = photo.get(photo.size() - 26); //Magic number. Photobucket loves to change this, but as of 11/2016 this is the offset. 
 			//System.out.println(script.toString());
 			String httpParse = "http://";
 			String selection = script.toString();
@@ -98,14 +99,10 @@ public class User {
 			while (tokenizer.hasMoreTokens()){
 				previousToken = currentToken;
 				currentToken = tokenizer.nextToken();
-				//				System.out.println(".");
-				//				System.out.println(currentToken);
 
 				if (currentToken.equals("albums")){
 					imageURL = httpParse + previousToken + "/" + currentToken + "/";
 					imageURL += tokenizer.nextToken() + "/" + tokenizer.nextToken() + "/" + tokenizer.nextToken();
-					//					System.out.println("found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-					//					System.out.println(imageURL);
 
 					//clean up
 					char prev = ' ';
@@ -113,7 +110,6 @@ public class User {
 					int counter = 0;
 					for (char a : imageURL.toCharArray()){
 						cur = a;
-						//System.out.println(imageURL);
 						if (cur == 'g' && prev == 'e' || cur == 'g' && prev == 'p' || cur == 'f' && prev == 'i' || cur == 'g' && prev == 'n' || cur == '4' && prev == 'p'){ //for jpeg, jpg, gif, png, and mp4.
 							//there's a bug in this. if a username is **eg, pg, if, etc... the link is cut off right there. TODO: Fix this.							
 							imageURL = imageURL.substring(0, counter + 1);
@@ -124,6 +120,7 @@ public class User {
 								//TODO: add the differentiation upon saving the file, that way it's easier. 
 								photoLinkList.add(imageURL);
 							}
+							System.out.println(imageURL);
 
 							break;
 						}
@@ -137,19 +134,24 @@ public class User {
 			}
 
 			System.out.println("Printing Links:");
-			//Remove last link of the of the photoLinkList because it is garbage.
-			photoLinkList.remove(photoLinkList.size() - 1);
-			for (String s : photoLinkList){
-				System.out.println(s);
+			if (!photoLinkList.isEmpty()){
+				//Remove last link of the of the photoLinkList because it is garbage.
+				photoLinkList.remove(photoLinkList.size() - 1);
+				for (String s : photoLinkList){
+					System.out.println(s);
+				}
+			}
+			else{
+				System.out.println("Photo list was empty!");
 			}
 
-			
-				//Begin Saving Files.
-				File outputFile, directory;
-				int numeral = 0;
-				for (String s : photoLinkList){
-					URL photoURL = new URL(s);
-					try{
+
+
+			//Begin Saving Files.
+			File outputFile, directory;
+			for (String s : photoLinkList){
+				URL photoURL = new URL(s);
+				try{
 					BufferedImage photoJoto = ImageIO.read(photoURL);
 					directory = new File("Saved_Users\\");
 					directory.mkdir();
@@ -157,14 +159,13 @@ public class User {
 					directory.mkdir();
 					outputFile = new File("Saved_Users\\" + this.username + "\\" + numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
 					ImageIO.write(photoJoto,"jpg", outputFile);
-					numeral++;
+					this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
 
 					System.out.println(s);
-					} catch(Exception e){
-						System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
-					}
+				} catch(Exception e){
+					System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
 				}
-
+			}
 
 			//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
 			//TODO: Use a string builder because it would be faster.
