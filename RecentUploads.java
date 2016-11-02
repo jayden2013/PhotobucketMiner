@@ -258,6 +258,7 @@ public class RecentUploads {
 					User user = new User(profileLink); //TODO: Purge doubles.
 					user.setUsername(usernameArray.get(i));
 					user.parseUser();
+					i++;
 				}
 
 			} catch (IOException e) {

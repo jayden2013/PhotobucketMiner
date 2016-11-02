@@ -133,19 +133,10 @@ public class User {
 
 			}
 
-			System.out.println("Printing Links:");
 			if (!photoLinkList.isEmpty()){
 				//Remove last link of the of the photoLinkList because it is garbage.
 				photoLinkList.remove(photoLinkList.size() - 1);
-				for (String s : photoLinkList){
-					System.out.println(s);
-				}
 			}
-			else{
-				System.out.println("Photo list was empty!");
-			}
-
-
 
 			//Begin Saving Files.
 			File outputFile, directory;
@@ -160,12 +151,12 @@ public class User {
 					outputFile = new File("Saved_Users\\" + this.username + "\\" + numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
 					ImageIO.write(photoJoto,"jpg", outputFile);
 					this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
-
 					System.out.println(s);
 				} catch(Exception e){
 					System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
 				}
 			}
+			return; //this return is what fixes part of the username bug, where all photos were saved in the same folder, and overwrote each other.
 
 			//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
 			//TODO: Use a string builder because it would be faster.
