@@ -65,7 +65,6 @@ public class RecentUploads {
 
 				// Put the section into a string we can manipulate.
 				String selection = script.toString();
-				System.out.println(selection);
 
 				// now the hard part....parsing through...by hand......RIP me.
 
