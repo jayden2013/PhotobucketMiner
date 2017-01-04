@@ -156,7 +156,7 @@ public class RecentUploads {
 				// New array list for now, until the connection bug is fixed.
 				ArrayList<String> losLinksArray = new ArrayList<String>();
 				int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
-				DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
+//				DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
 				ArrayList<String> profileLinkArray = new ArrayList<String>(); //for profile links
 				ArrayList<String> newUserArray = new ArrayList<String>(); //a new arraylist for usernames
 				for (int urls = 0; urls < linkArray.size(); urls++) {
@@ -181,7 +181,7 @@ public class RecentUploads {
 						// now, parse..
 						directLink = directLink.substring(40, directLink.length() - 4);
 						losLinksArray.add(directLink);
-						System.out.println(directLink);
+						//System.out.println(directLink);
 						String profileLink = directLink.substring(7, 13);
 						if (profileLink.endsWith("p")){
 							profileLink = profileLink.substring(0, profileLink.length() - 1);
@@ -210,50 +210,51 @@ public class RecentUploads {
 				}
 
 				//Print all of the profile links.
-				//System.out.println("Profile Links: ");
+				System.out.println("FETCHED USER PROFILES...");
+				System.out.println("WILL ATTEMPT TO PARSE: ");
 				for (int k = 0; k < profileLinkArray.size(); k++){
 					System.out.println(profileLinkArray.get(k));				
 				}
 
 				// ok frame time.?
-				JFrame frame = new JFrame("Recent Uploads");
-				frame.setLayout(new GridLayout(6, 6));
-				int height = 0;
-				int width = 0;
+//				JFrame frame = new JFrame("Recent Uploads");
+//				frame.setLayout(new GridLayout(6, 6));
+//				int height = 0;
+//				int width = 0;
 				//For saving the photos.
-				int numeral = 0;
-				File outputFile, directory;
+//				int numeral = 0;
+//				File outputFile, directory;
 
 				// time to loop through to display images...
-				for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
-					URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
-					BufferedImage photoJoto = ImageIO.read(photoURL);
-					ImageIcon photoPendejo = new ImageIcon(photoJoto);
-					width = photoPendejo.getIconWidth();
-					height = photoPendejo.getIconHeight();
-					JLabel label = new JLabel(photoPendejo);
-					label.setSize(width, height);
+//				for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
+//					URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
+//					BufferedImage photoJoto = ImageIO.read(photoURL);
+//					ImageIcon photoPendejo = new ImageIcon(photoJoto);
+//					width = photoPendejo.getIconWidth();
+//					height = photoPendejo.getIconHeight();
+//					JLabel label = new JLabel(photoPendejo);
+//					label.setSize(width, height);
 					// frame.getContentPane().add(label);
-					frame.add(label);
-					frame.pack();
+//					frame.add(label);
+//					frame.pack();
 
 					//save the photo - this assumes all photos are jpgs.
 					//assuming they are all jpgs is fine for jpgs and pngs.
 					//gifs too...they just won't animate.
 					//differentiation could come in an update.
-					directory = new File("saved\\");
-					directory.mkdir();
-					directory = new File("saved\\" + usernameArray.get(numeral) + "\\");
-					directory.mkdir();
-					outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg"); //TODO: Add ability to save photos in directories to same directory inside of username locally.
-					ImageIO.write(photoJoto, "jpg", outputFile);
-					numeral++;
-				}
+//					directory = new File("saved\\");
+//					directory.mkdir();
+//					directory = new File("saved\\" + usernameArray.get(numeral) + "\\");
+//					directory.mkdir();
+//					outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg"); //TODO: Add ability to save photos in directories to same directory inside of username locally.
+//					ImageIO.write(photoJoto, "jpg", outputFile);
+//					numeral++;
+//				}
 
-				frame.setSize(800, 800);
-				if (pageNumber == numberOfPages){ //only allow the pop up window to stop the entire program if it's the last one.
-					frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-				}
+//				frame.setSize(800, 800);
+//				if (pageNumber == numberOfPages){ //only allow the pop up window to stop the entire program if it's the last one.
+//					frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//				}
 				//frame.setVisible(true); //commented out for testing during class.
 				int i = 0;
 				ArrayList<String> oldProfileLinkArray = new ArrayList<String>();
@@ -265,7 +266,7 @@ public class RecentUploads {
 					for (String oldProfileLink : oldProfileLinkArray){
 						if (oldProfileLink.equals(profileLink)){
 							purge = true;
-							System.out.println("USER ALREADY PARSED! PURGED!");
+							//System.out.println("USER ALREADY PARSED! PURGED!");
 						}
 					}
 					if (!purge){

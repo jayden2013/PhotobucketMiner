@@ -29,12 +29,12 @@ public class User {
 	private int numeral = 0;
 	private int numPages = 1;
 	private int currentPage = 1;
+	private final int TOLERANCE = 4; //4 seems like a good tolerance, because the duplicates tend to be 3 to 5...
 
 	public User(String url) {
 		this.userURL += url + "?sort=3&page=1"; //the last part is needed to increment the URL.
 		try{
 			numberOfPages();
-			System.out.println("NUMBER OF PAGES: " + this.numPages);
 		}
 		catch(Exception e){
 			System.err.println("User created, but failed to fetch number of pages.");
@@ -82,7 +82,7 @@ public class User {
 	 * Increments the user URL.
 	 */
 	public void incrementURL(){
-		userURL = userURL.substring(0, userURL.length() - 1) + currentPage;
+		this.userURL = this.userURL.substring(0, this.userURL.length() - 1) + this.currentPage;
 	}
 
 	/**
@@ -91,7 +91,6 @@ public class User {
 	 * @throws IOException
 	 */
 	public int numberOfPages() throws IOException{
-		System.out.println(this.userURL);
 		//Get entire photobucket page.
 		//Need a user agent in order to get the redirect from photobucket.
 		Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").get();
@@ -119,15 +118,13 @@ public class User {
 		return this.numPages;
 	}
 
-
 	/**
 	 * Parses the user profile.
 	 */
 	public void parseUser(){
-
-		System.out.println("made it this far, parse user...");
+		
 		while(this.currentPage <= this.numPages){
-
+			System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
 			try {
 				//Get entire photobucket page.
 				//Need a user agent in order to get the redirect from photobucket.
@@ -141,7 +138,7 @@ public class User {
 				String httpParse = "http://";
 				String selection = script.toString();
 				ArrayList<String> photoLinkList = new ArrayList<String>();
-				StringBuilder losLinks = new StringBuilder(); //TODO: use this to create the links, for efficiency.
+//				StringBuilder losLinks = new StringBuilder(); //TODO: use this to create the links, for efficiency.
 
 				//parse links
 
@@ -191,29 +188,44 @@ public class User {
 
 				//Begin Saving Files.
 				File outputFile, directory;
+				float modCount = 1; //use modcount in an attempt to reduce duplicate photos, will use a float in case there are lots of images.
 				for (String s : photoLinkList){
 					URL photoURL = new URL(s);
-					try{
-						BufferedImage photoJoto = ImageIO.read(photoURL);
-						directory = new File("Saved_Users\\");
-						directory.mkdir();
-						directory = new File("Saved_Users\\" + this.username + "\\");
-						directory.mkdir();
-						outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
-						ImageIO.write(photoJoto,"jpg", outputFile);
-						this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
-						System.out.println(s);
-					} catch(Exception e){
-						System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
+					if (modCount % this.TOLERANCE != 0){
+//						System.out.println(".");
+//						System.out.println("..");
+//						System.out.println("...");
+//						System.out.println("...");
+//						System.out.println("..");
+//						System.out.println(".");
 					}
+					else{
+						try{
+							BufferedImage photoJoto = ImageIO.read(photoURL);
+							directory = new File("Saved_Users\\");
+							directory.mkdir();
+							directory = new File("Saved_Users\\" + this.username + "\\");
+							directory.mkdir();
+							outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
+							ImageIO.write(photoJoto,"jpg", outputFile);
+							this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
+							System.out.println("SAVED: " + s);
+						} catch(Exception e){
+							//System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
+						}
+					}
+					modCount++;
 				}
-				
-			//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
-			//TODO: Use a string builder because it would be faster.
 
-		} catch (IOException e) {
-			System.err.println("User Connection Error.");
-		}
+				//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
+				//Because seperate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
+				//Until there is a better way, the duplicates tend to be in groups of 3 to 5, the program will skip a few using a modcount and a tolerance.
+				//TODO: Use a string builder because it would be faster.
+
+			} catch (IOException e) {
+				System.err.println("User Connection Error.");
+				break;
+			}
 			System.out.println("FINISHED PAGE " + currentPage + " of " + numPages);
 			currentPage++;
 			incrementURL();
