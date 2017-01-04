@@ -1,5 +1,5 @@
 # PhotobucketMiner
-Fetches, parses, and displays Photobucket's recent uploads.
+Parses and downloads Photobucket's recent uploads and the profiles of the recent uploaders. 
  This utilizes JSoup for grabbing the recent uploads page, and the urls for the pages the images are on.
  However, due to the way Photobucket handles their photos JSoup would not work for getting the direct links to the images. 
  Because of this, a URL, input stream, and buffered reader were used for the second half of this program...in case you were wondering why JSoup wasn't used. 
@@ -15,12 +15,12 @@ Usage
 <hr>
 On Windows:
 <br>
-javac -classpath .;jsoup-1.8.3.jar RecentUploads.java
+javac -classpath .;jsoup-1.8.3.jar *.java
 <br>
 java -classpath .;jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
 
 Linux / Mac OS:
 <br>
-javac -classpath .:jsoup-1.8.3.jar RecentUploads.java
+javac -classpath .:jsoup-1.8.3.jar *.java
 <br>
 java -classpath .:jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
