@@ -138,7 +138,7 @@ public class User {
 				String httpParse = "http://";
 				String selection = script.toString();
 				ArrayList<String> photoLinkList = new ArrayList<String>();
-//				StringBuilder losLinks = new StringBuilder(); //TODO: use this to create the links, for efficiency.
+				StringBuilder losLinks = new StringBuilder(); //kachow
 
 				//parse links
 
@@ -149,20 +149,21 @@ public class User {
 				while (tokenizer.hasMoreTokens()){
 					previousToken = currentToken;
 					currentToken = tokenizer.nextToken();
+					losLinks.setLength(0); //clear string builder
 
 					if (currentToken.equals("albums")){
-						imageURL = httpParse + previousToken + "/" + currentToken + "/";
-						imageURL += tokenizer.nextToken() + "/" + tokenizer.nextToken() + "/" + tokenizer.nextToken();
+						losLinks.append(httpParse + previousToken + "/" + currentToken + "/");
+						losLinks.append(tokenizer.nextToken() + "/" + tokenizer.nextToken() + "/" + tokenizer.nextToken());
 
 						//clean up
 						char prev = ' ';
 						char cur = ' ';
 						int counter = 0;
-						for (char a : imageURL.toCharArray()){
+						for (char a : losLinks.toString().toCharArray()){
 							cur = a;
 							if (cur == 'g' && prev == 'e' || cur == 'g' && prev == 'p' || cur == 'f' && prev == 'i' || cur == 'g' && prev == 'n' || cur == '4' && prev == 'p'){ //for jpeg, jpg, gif, png, and mp4.
 								//there's a bug in this. if a username is **eg, pg, if, etc... the link is cut off right there. TODO: Fix this.							
-								imageURL = imageURL.substring(0, counter + 1);
+								imageURL = losLinks.toString().substring(0, counter + 1);
 								if (photoLinkList.isEmpty()){ //prevent an index out of bounds exception below by checking before trying to access.
 									photoLinkList.add(imageURL);
 								}
