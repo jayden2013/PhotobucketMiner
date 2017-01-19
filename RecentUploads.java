@@ -3,22 +3,12 @@
  * @author Jayden Weaver
  */
 
-import java.awt.GridLayout;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -96,7 +86,6 @@ public class RecentUploads {
 
 				}
 
-				// TODO: Make this work with all photos. Currently only gets the links for photos that aren't several folders deep. Mostly working though.
 				// This string will make parsing easier.
 				String parseEasy = "http://media.photobucket.com/user/";
 				String temp, finalString;
@@ -104,7 +93,6 @@ public class RecentUploads {
 
 				for (int i = 0; i < linkArray.size(); i++) {
 					temp = linkArray.get(i);
-
 					temp = temp.substring(42, temp.length());
 					// We'll use this offset to cut the string again, to get the username only.
 					int offSet = 0; // no magic numbers here, no sir.
@@ -134,7 +122,6 @@ public class RecentUploads {
 					prev = 'a';
 					// let's substring again.
 					temp = temp.substring(offSet + 7); // magic number, being the number of characters in /\media\ minus 1.
-					//	System.out.println("TEMP: " + temp);
 					offSet = 0;
 					for (char ch : temp.toCharArray()) {
 						current = ch;
@@ -145,25 +132,21 @@ public class RecentUploads {
 						offSet++;
 					}
 					String albumAndOrPhoto = temp.substring(0, offSet - 1);
-					//	System.out.println(albumAndOrPhoto);
 					finalString += albumAndOrPhoto;
 					// Remember to add the final string to the string array for use later.
 					linkArray.set(i, finalString);
-					//System.out.println(finalString);
 
 				}
 
 				// New array list for now, until the connection bug is fixed.
 				ArrayList<String> losLinksArray = new ArrayList<String>();
 				int linkCount = 0; //we'll use a link count in case no photos are shown, we can warn the user.
-//				DecimalFormat df = new DecimalFormat("0.00"); //for use showing percentage...
 				ArrayList<String> profileLinkArray = new ArrayList<String>(); //for profile links
 				ArrayList<String> newUserArray = new ArrayList<String>(); //a new arraylist for usernames
 				for (int urls = 0; urls < linkArray.size(); urls++) {
 
 					if (linkArray.get(urls).substring(linkArray.get(urls).length() - 4, linkArray.get(urls).length()).equals("html")) {
 						linkCount++;
-						// before we can do a frame, we need to get the direct link to images. otherwise we're fucked.
 						// create url
 						URL url = new URL(linkArray.get(urls));
 						InputStream inStream = url.openStream();
@@ -196,16 +179,11 @@ public class RecentUploads {
 						profileLinkArray.add(profileLink);
 						newUserArray.add(usernameArray.get(urls));
 					}
-					else{ //if the photo is in a folder, reparse.s
-						//TODO
-					}				
 
-					//	System.out.println("Page " + pageNumber + ": " + df.format((double)(urls / (double) linkArray.size()) * 100) + "% Complete.");
 				}
-				//System.out.println("Page " + pageNumber + ": 100.00% Complete.");
+				
 				if (linkCount == 0){
-					System.err.println("No links were parsed! This is due to a parsing limitation in this version of code."); //Limitation: can't get images inside of directories. Requires more parsing.
-					System.err.println("No GUI will be loaded.");
+					System.err.println("No links were parsed!"); //Limitation: can't get images inside of directories. Requires more parsing.
 					return; //Don't bother loading a frame if no links were parsed.
 				}
 
@@ -216,46 +194,6 @@ public class RecentUploads {
 					System.out.println(profileLinkArray.get(k));				
 				}
 
-				// ok frame time.?
-//				JFrame frame = new JFrame("Recent Uploads");
-//				frame.setLayout(new GridLayout(6, 6));
-//				int height = 0;
-//				int width = 0;
-				//For saving the photos.
-//				int numeral = 0;
-//				File outputFile, directory;
-
-				// time to loop through to display images...
-//				for (int linkArrayLoop = 0; linkArrayLoop < losLinksArray.size(); linkArrayLoop++) {
-//					URL photoURL = new URL(losLinksArray.get(linkArrayLoop));
-//					BufferedImage photoJoto = ImageIO.read(photoURL);
-//					ImageIcon photoPendejo = new ImageIcon(photoJoto);
-//					width = photoPendejo.getIconWidth();
-//					height = photoPendejo.getIconHeight();
-//					JLabel label = new JLabel(photoPendejo);
-//					label.setSize(width, height);
-					// frame.getContentPane().add(label);
-//					frame.add(label);
-//					frame.pack();
-
-					//save the photo - this assumes all photos are jpgs.
-					//assuming they are all jpgs is fine for jpgs and pngs.
-					//gifs too...they just won't animate.
-					//differentiation could come in an update.
-//					directory = new File("saved\\");
-//					directory.mkdir();
-//					directory = new File("saved\\" + usernameArray.get(numeral) + "\\");
-//					directory.mkdir();
-//					outputFile = new File("saved\\" + usernameArray.get(numeral)+"\\" +"saved_" + numeral + ".jpg"); //TODO: Add ability to save photos in directories to same directory inside of username locally.
-//					ImageIO.write(photoJoto, "jpg", outputFile);
-//					numeral++;
-//				}
-
-//				frame.setSize(800, 800);
-//				if (pageNumber == numberOfPages){ //only allow the pop up window to stop the entire program if it's the last one.
-//					frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//				}
-				//frame.setVisible(true); //commented out for testing during class.
 				int i = 0;
 				ArrayList<String> oldProfileLinkArray = new ArrayList<String>();
 				boolean purge = false;
@@ -266,7 +204,7 @@ public class RecentUploads {
 					for (String oldProfileLink : oldProfileLinkArray){
 						if (oldProfileLink.equals(profileLink)){
 							purge = true;
-							//System.out.println("USER ALREADY PARSED! PURGED!");
+							//set purge variable so we will do nothing.
 						}
 					}
 					if (!purge){
@@ -291,5 +229,4 @@ public class RecentUploads {
 				+ "java -classpath .;jsoup-1.8.3.jar RecentUploads <number of pages to parse>\n" + 
 				"Linux / Mac OS: \n" + "java -classpath .:jsoup-1.8.3.jar RecentUploads <number of pages to parse>";
 	}
-
 }

@@ -1,16 +1,11 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.StreamTokenizer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
-import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -131,10 +126,8 @@ public class User {
 				Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").get();
 				//get all the script tags and put them in the element.
 				Elements photo = photobucketDocument.getElementsByTag("script");
-				//System.out.println(photo);
 				Element script = photo.get(photo.size() - 25); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset. 
 
-				//System.out.println(script.toString());
 				String httpParse = "http://";
 				String selection = script.toString();
 				ArrayList<String> photoLinkList = new ArrayList<String>();
@@ -193,12 +186,7 @@ public class User {
 				for (String s : photoLinkList){
 					URL photoURL = new URL(s);
 					if (modCount % this.TOLERANCE != 0){
-//						System.out.println(".");
-//						System.out.println("..");
-//						System.out.println("...");
-//						System.out.println("...");
-//						System.out.println("..");
-//						System.out.println(".");
+						//Do nothing.
 					}
 					else{
 						try{
@@ -207,12 +195,13 @@ public class User {
 							directory.mkdir();
 							directory = new File("Saved_Users\\" + this.username + "\\");
 							directory.mkdir();
+							//TODO: add differentiation. ..... if last three of string s equal png, gif, mp4, jpg etc.
 							outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg"); //TODO: Add ability to save png, gif, mp4 with correct file extension.
 							ImageIO.write(photoJoto,"jpg", outputFile);
 							this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
 							System.out.println("SAVED: " + s);
 						} catch(Exception e){
-							//System.out.println("BAD URL..! SKIPPING."); //catch the exception that is thrown by some bad duplicate URLs that redirect you.
+							//catch the exception that is thrown by some bad duplicate URLs that redirect you.
 						}
 					}
 					modCount++;
@@ -220,9 +209,7 @@ public class User {
 
 				//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
 				//Because seperate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
-				//Until there is a better way, the duplicates tend to be in groups of 3 to 5, the program will skip a few using a modcount and a tolerance.
-				//TODO: Use a string builder because it would be faster.
-
+				
 			} catch (IOException e) {
 				System.err.println("User Connection Error.");
 				break;
