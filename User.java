@@ -32,6 +32,7 @@ public class User {
 			numberOfPages();
 		}
 		catch(Exception e){
+			System.out.println(e);
 			System.err.println("User created, but failed to fetch number of pages.");
 		}
 	}
@@ -78,6 +79,18 @@ public class User {
 	 */
 	public void incrementURL(){
 		this.userURL = this.userURL.substring(0, this.userURL.length() - 1) + this.currentPage;
+	}
+	
+	/**
+	 * Sets the current page variable.
+	 * @param i
+	 */
+	public void setCurrentPage(int i){
+		while(this.currentPage < i){
+			this.currentPage++;
+			incrementURL();
+		}
+		
 	}
 
 	/**

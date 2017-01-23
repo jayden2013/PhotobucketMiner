@@ -10,7 +10,7 @@
 public class ScrapeUser {
 
 	public static void main(String args[]){
-		if (args.length < 1 || args.length > 1){
+		if (args.length < 1 || args.length > 2){
 			System.err.println(usage());
 			return;
 		}
@@ -19,6 +19,9 @@ public class ScrapeUser {
 		String url = "photobucket.com/user/" + username + "/library/";
 		User user = new User(url);
 		user.setUsername(username);
+		if (args.length == 2){
+			user.setCurrentPage(Integer.parseInt(args[1]));
+		}
 		user.parseUser();		
 	}
 
@@ -27,5 +30,4 @@ public class ScrapeUser {
 				+ "java -classpath .;jsoup-1.8.3.jar ScrapeUser <username>\n" + 
 				"Linux / Mac OS: \n" + "java -classpath .:jsoup-1.8.3.jar ScrapeUser <username>";
 	}
-
 }
