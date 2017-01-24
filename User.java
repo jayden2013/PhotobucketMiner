@@ -37,6 +37,10 @@ public class User {
 		}
 	}
 
+	/**
+	 * Sets the username. 
+	 * @param un
+	 */
 	public void setUsername(String un){
 		this.username = un;
 	}

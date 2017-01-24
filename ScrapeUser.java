@@ -1,11 +1,9 @@
+
 /**
  *  
  * @author Jayden Weaver
- *
- */
-
-/*
  * Scrapes the profile of a specified user.
+ * 
  */
 public class ScrapeUser {
 
@@ -25,6 +23,10 @@ public class ScrapeUser {
 		user.parseUser();		
 	}
 
+	/**
+	 * 
+	 * @return usage
+	 */
 	private static String usage(){
 		return "Windows: \n"
 				+ "java -classpath .;jsoup-1.8.3.jar ScrapeUser <username>\n" + 
