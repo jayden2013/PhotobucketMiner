@@ -94,7 +94,14 @@ public class User {
 			this.currentPage++;
 			incrementURL();
 		}
-		
+	}
+	
+	/**
+	 * Manually set the number of pages.
+	 * @param i
+	 */
+	public void setNumberOfPages(int i){
+		this.numPages = i;
 	}
 
 	/**
@@ -231,7 +238,7 @@ public class User {
 				System.err.println("User Connection Error.");
 				break;
 			}
-			System.out.println("FINISHED PAGE " + currentPage + " of " + numPages);
+			System.out.println("FINISHED PAGE " + currentPage + " OF " + numPages);
 			currentPage++;
 			incrementURL();
 		}
