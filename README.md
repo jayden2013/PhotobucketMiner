@@ -32,10 +32,16 @@ For downloading the images of specified accounts:
 <br>
 javac -classpath .;jsoup-1.8.3.jar *.java
 <br>
-javac -classpath .;jsoup-1.8.3.jar ScrapeUser \<username\> [starting page] [ending page]
+java -classpath .;jsoup-1.8.3.jar ScrapeUser \<username\> [starting page] [ending page]
+<br>
+
+GUI: javac -classpath .;jsoup-1.8.3.jar ScrapeUserGUI
 
 ###Linux / Mac OS:
 <br>
 javac -classpath .:jsoup-1.8.3.jar *.java
 <br>
-javac -classpath .:jsoup-1.8.3.jar ScrapeUser \<username\> [starting page [ending page]
+java -classpath .:jsoup-1.8.3.jar ScrapeUser \<username\> [starting page [ending page]
+<br>
+
+GUI: javac -classpath .;jsoup-1.8.3.jar ScrapeUserGUI

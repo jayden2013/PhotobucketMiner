@@ -242,6 +242,5 @@ public class User {
 			currentPage++;
 			incrementURL();
 		}
-
 	}
 }
