@@ -41,7 +41,7 @@ GUI: java -classpath .;jsoup-1.8.3.jar ScrapeUserGUI
 <br>
 javac -classpath .:jsoup-1.8.3.jar *.java
 <br>
-java -classpath .:jsoup-1.8.3.jar ScrapeUser \<username\> [starting page [ending page]
+java -classpath .:jsoup-1.8.3.jar ScrapeUser \<username\> [starting page] [ending page]
 <br>
 
 GUI: java -classpath .:jsoup-1.8.3.jar ScrapeUserGUI
