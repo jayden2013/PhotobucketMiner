@@ -220,19 +220,18 @@ public class User {
 							directory = new File("Saved_Users\\" + this.username + "\\");
 							directory.mkdir();
 							//Differentiate between file types. Could download pngs and static gifs as jpg, but some are discolored when you don't differentiate.
-							if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("jpg")){
-								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");					
-								ImageIO.write(photoJoto,"jpg", outputFile);
-							}
-							else if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("png")){
+							if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("png")){
 								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".png");					
 								ImageIO.write(photoJoto,"png", outputFile);
 							}
 							else if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("gif")){
 								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".gif");					
 								ImageIO.write(photoJoto,"gif", outputFile);
-							}						
-
+							}
+							else{ //if not a png or gif, must be a jpg or jpeg.
+								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");					
+								ImageIO.write(photoJoto,"jpg", outputFile);
+							}
 							this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
 							System.out.println("SAVED: " + s);
 						} catch(Exception e){
