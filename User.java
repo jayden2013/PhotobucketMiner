@@ -132,7 +132,16 @@ public class User {
 				if (currToken.equals("\"numPages\":")){
 					this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 2)); //supports two digit
 				}
+				else{
+					currToken = currToken.substring(0,currToken.length() - 1);
+					if (currToken.equals("\"numPages\":")){
+						this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() -3)); //should support three digit, but haven't come across a 3 digit account
+					}
+				}
 			}
+			
+			
+			
 		}
 		return this.numPages;
 	}
