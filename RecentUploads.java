@@ -20,12 +20,20 @@ import org.jsoup.select.Elements;
  * 
  */
 public class RecentUploads {
+	//URL to get
+	static String URL = "http://www.photobucket.com/recentuploads?page=";
 
 	public static void main(String[] args) {
-		if (args.length < 1 || args.length > 1){
+		if (args.length < 1 || args.length > 2){
 			System.err.println(usage());
 			return;
 		}
+
+		//Check if arguments contain a search term.
+		if (args.length == 2){
+			setSearchTerm(args[1]);
+		}
+
 		int pageNumber = 1; //initial page number.
 		int numberOfPages = 0;
 		try{
@@ -37,8 +45,8 @@ public class RecentUploads {
 			return;
 		}
 		while(pageNumber <= numberOfPages){
-			// URL to get
-			String URL = "http://www.photobucket.com/recentuploads?page=" + pageNumber;
+			//Add page number to URL
+			URL += pageNumber;
 			try {
 				// Get entire document
 				org.jsoup.nodes.Document photobucket = Jsoup.connect(URL).get();
@@ -222,6 +230,22 @@ public class RecentUploads {
 
 	}
 
+	/**
+	 * Sets the URL to be a custom search term, specified by the user.
+	 * @param searchTerm
+	 */
+	public static void setSearchTerm(String searchTerm){
+		if (searchTerm.contains(" ")){
+			System.err.println("Currently no support for search terms containing spaces!");
+			return;
+		}
+		URL = "http://photobucket.com/images/" + searchTerm;
+	}
+
+	/**
+	 * Returns the usage.
+	 * @return usage
+	 */
 	private static String usage(){
 		return "Windows: \n"
 				+ "java -classpath .;jsoup-1.8.3.jar RecentUploads <number of pages to parse>\n" + 

@@ -39,7 +39,7 @@ public class ScrapeUserGUI {
 				| UnsupportedLookAndFeelException e1) {
 			System.err.println(e1);
 		}
-		JFrame frame = new JFrame("Scrape User GUI " + VERSION);
+		JFrame frame = new JFrame("PhotobucketMiner " + VERSION);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JTextField textField = new JTextField(20);
@@ -105,6 +105,8 @@ public class ScrapeUserGUI {
 
 		//Main tab
 		JPanel panel1 = new JPanel();
+		JLabel userLabel = new JLabel("User: ");
+		panel1.add(userLabel);
 		panel1.add(textField);
 		panel1.add(pageLabel);
 		panel1.add(startPageField);
@@ -112,14 +114,52 @@ public class ScrapeUserGUI {
 		panel1.add(endPageField);
 		panel1.add(enterButton);
 
-		tabbedPane.addTab("PhotobucketMiner " + VERSION, panel1);
+		tabbedPane.addTab("Z-750 Binary Rifle ", panel1); //for accuracy
+
+		//Recent Uploads and Search terms
+		JPanel scatterPanel = new JPanel();
+		JTextField searchTermText = new JTextField(20);
+		JButton searchButton = new JButton("Scrape Search Term");
+		searchButton.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+
+		//when the button is pressed, being the parsing.
+		searchButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//change button
+				searchButton.setText("SCRAPING...");
+				searchButton.setForeground(Color.RED);
+				
+				String args[];
+				if (searchTermText.getText().equals("")){
+					args = new String[1];
+					args[0] = "1";
+					RecentUploads.main(args);
+				}
+				else{
+					args = new String[2];
+					args[0] = "1";
+					args[1] = searchTermText.getText();
+					RecentUploads.main(args);
+				}
+				
+				//reset button
+				searchButton.setText("Scrape Search Term");
+				searchButton.setForeground(Color.BLACK);
+			}
+		});
+		
+		JLabel searchLabel = new JLabel("Search: ");
+		scatterPanel.add(searchLabel);
+		scatterPanel.add(searchTermText);
+		scatterPanel.add(searchButton);
+		tabbedPane.addTab("Z-180 Scattershot", scatterPanel); //sometimes you'll hit something
 
 		//Logging tab
 		JPanel panel2 = new JPanel();
 		Font statusFont = new Font("Serif", Font.BOLD, 12);
 		statusArea.setFont(statusFont);
 		panel2.add(statusArea);
-		tabbedPane.addTab("Console Output", panel2);
+		tabbedPane.addTab("Console", panel2);
 
 		//about tab
 		JLabel author = new JLabel("@author: Jayden Weaver");
