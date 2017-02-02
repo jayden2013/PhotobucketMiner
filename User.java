@@ -84,7 +84,7 @@ public class User {
 	public void incrementURL(){
 		this.userURL = this.userURL.substring(0, this.userURL.length() - 1) + this.currentPage;
 	}
-	
+
 	/**
 	 * Sets the current page variable.
 	 * @param i
@@ -95,7 +95,7 @@ public class User {
 			incrementURL();
 		}
 	}
-	
+
 	/**
 	 * Manually set the number of pages.
 	 * @param i
@@ -147,7 +147,7 @@ public class User {
 	 * Parses the user profile.
 	 */
 	public void parseUser(){
-		
+
 		while(this.currentPage <= this.numPages){
 			System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
 			try {
@@ -248,7 +248,7 @@ public class User {
 
 				//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
 				//Because seperate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
-				
+
 			} catch (IOException e) {
 				System.err.println("User Connection Error.");
 				break;

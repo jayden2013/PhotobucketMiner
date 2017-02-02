@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -19,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * A GUI for scraping user profiles.
@@ -30,12 +33,22 @@ public class ScrapeUserGUI {
 	final static double VERSION = 1.0;
 
 	public static void main(String[] args) throws IOException{
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			System.err.println(e1);
+		}
 		JFrame frame = new JFrame("Scrape User GUI " + VERSION);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JTextField textField = new JTextField(20);
 		JTextArea statusArea = new JTextArea(20,20);
 		JButton enterButton = new JButton("Scrape User");
+		JLabel pageLabel = new JLabel("page");
+		JTextField startPageField = new JTextField(3);
+		JLabel throughLabel = new JLabel("through");
+		JTextField endPageField = new JTextField(3);
 		///////////////////////////////////////////////////////////////////
 		// http://stackoverflow.com/questions/19834155/jtextarea-as-console
 		PrintStream out = new PrintStream(new TextAreaOutputStream(statusArea));
@@ -61,6 +74,26 @@ public class ScrapeUserGUI {
 				System.out.println("WILL ATTEMPT TO PARSE USER: " + username);
 				String url = "photobucket.com/user/" + username + "/library/";
 				User user = new User(url);
+
+				boolean pageSet = false;
+				//check to see if user set a start page
+				if (!startPageField.getText().equals("")){
+					user.setCurrentPage(Integer.parseInt(startPageField.getText()));
+					pageSet = true;
+				}
+
+				//check to see if user set an end page
+				if (!endPageField.getText().equals("") && pageSet){
+					if (Integer.parseInt(startPageField.getText()) > Integer.parseInt(endPageField.getText())){ //check size of pages
+						System.out.println("Start page cannot be greater than the end page!"); //let the user know
+						enterButton.setText("Scrape User"); //reset button text after scraping
+						enterButton.setForeground(Color.BLACK); //reset text color after scraping 
+						return;
+					}
+					user.setNumberOfPages(Integer.parseInt(endPageField.getText()));
+
+				}
+
 				user.setUsername(username);
 				user.parseUser();
 				enterButton.setText("Scrape User"); //reset button text after scraping
@@ -73,11 +106,18 @@ public class ScrapeUserGUI {
 		//Main tab
 		JPanel panel1 = new JPanel();
 		panel1.add(textField);
+		panel1.add(pageLabel);
+		panel1.add(startPageField);
+		panel1.add(throughLabel);
+		panel1.add(endPageField);
 		panel1.add(enterButton);
+
 		tabbedPane.addTab("PhotobucketMiner " + VERSION, panel1);
 
 		//Logging tab
 		JPanel panel2 = new JPanel();
+		Font statusFont = new Font("Serif", Font.BOLD, 12);
+		statusArea.setFont(statusFont);
 		panel2.add(statusArea);
 		tabbedPane.addTab("Console Output", panel2);
 

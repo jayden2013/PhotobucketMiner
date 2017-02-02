@@ -179,7 +179,7 @@ public class RecentUploads {
 					}
 
 				}
-				
+
 				if (linkCount == 0){
 					System.err.println("No links were parsed!"); //Limitation: can't get images inside of directories. Requires more parsing.
 					return; //Don't bother loading a frame if no links were parsed.
