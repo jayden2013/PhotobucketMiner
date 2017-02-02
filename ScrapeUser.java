@@ -28,7 +28,7 @@ public class ScrapeUser {
 	}
 
 	/**
-	 * 
+	 * Returns a usage statement.
 	 * @return usage
 	 */
 	private static String usage(){

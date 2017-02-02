@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
@@ -45,12 +46,25 @@ public class ScrapeUserGUI {
 		ActionListener EnterMonitor = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//do user
+				enterButton.setText("SCRAPING..."); //button text while scraping
+				enterButton.setForeground(Color.RED); //button text color while scraping				
 				String username = textField.getText();
+
+				//check for empty username field
+				if (username.equals("")){
+					System.err.println("Cannot leave field blank!");
+					enterButton.setText("Scrape User"); //reset button text after scraping
+					enterButton.setForeground(Color.BLACK); //reset text color after scraping 
+					return;
+				}
+
 				System.out.println("WILL ATTEMPT TO PARSE USER: " + username);
 				String url = "photobucket.com/user/" + username + "/library/";
 				User user = new User(url);
 				user.setUsername(username);
 				user.parseUser();
+				enterButton.setText("Scrape User"); //reset button text after scraping
+				enterButton.setForeground(Color.BLACK); //reset text color after scraping 
 			}
 		};
 
@@ -80,18 +94,31 @@ public class ScrapeUserGUI {
 		panel3.add(year);
 		tabbedPane.addTab("About", panel3);
 
-		//Add hyperlink to github label
-		github.addMouseListener(new MouseAdapter(){
+		//Add hyperlink to author label
+		author.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
 				try{
-					Desktop.getDesktop().browse(new URI("http://www.github.com/jayden2013"));
+					Desktop.getDesktop().browse(new URI("http://www.twitter.com/weaverfever69")); //twitter account
 				}
 				catch(Exception ex){
 					System.err.println(ex);
 				}
 			}			
 		});
-		github.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		author.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		//Add hyperlink to github label
+		github.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				try{
+					Desktop.getDesktop().browse(new URI("http://www.github.com/jayden2013")); //github account
+				}
+				catch(Exception ex){
+					System.err.println(ex);
+				}
+			}			
+		});
+		github.setCursor(new Cursor(Cursor.HAND_CURSOR));	
 
 		//add enter button listener
 		enterButton.addActionListener(EnterMonitor);
@@ -102,7 +129,6 @@ public class ScrapeUserGUI {
 		frame.add(tabbedPane);
 		frame.pack();
 		frame.setVisible(true);
-
 	}
 }
 
