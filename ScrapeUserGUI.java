@@ -1,13 +1,21 @@
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -17,8 +25,7 @@ import javax.swing.JTextField;
  *
  */
 public class ScrapeUserGUI {
-	//TODO: Fix console output and make GUI better
-	
+
 	final static double VERSION = 1.0;
 
 	public static void main(String[] args) throws IOException{
@@ -27,14 +34,14 @@ public class ScrapeUserGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JTextField textField = new JTextField(20);
 		JTextArea statusArea = new JTextArea(20,20);
-		
+		JButton enterButton = new JButton("Scrape User");
 		///////////////////////////////////////////////////////////////////
 		// http://stackoverflow.com/questions/19834155/jtextarea-as-console
 		PrintStream out = new PrintStream(new TextAreaOutputStream(statusArea));
 		System.setOut(out);
 		System.setErr(out);
 		///////////////////////////////////////////////////////////////////
-		
+
 		ActionListener EnterMonitor = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//do user
@@ -47,12 +54,52 @@ public class ScrapeUserGUI {
 			}
 		};
 
-		JButton enterButton = new JButton("Scrape User");
+		JTabbedPane tabbedPane = new JTabbedPane();
+
+		//Main tab
+		JPanel panel1 = new JPanel();
+		panel1.add(textField);
+		panel1.add(enterButton);
+		tabbedPane.addTab("PhotobucketMiner " + VERSION, panel1);
+
+		//Logging tab
+		JPanel panel2 = new JPanel();
+		panel2.add(statusArea);
+		tabbedPane.addTab("Console Output", panel2);
+
+		//about tab
+		JLabel author = new JLabel("@author: Jayden Weaver");
+		JLabel github = new JLabel("github.com/jayden2013");
+		JLabel space = new JLabel(" ");
+		JLabel year = new JLabel("2017");
+		JPanel panel3 = new JPanel();
+		panel3.setLayout(new BoxLayout(panel3, BoxLayout.Y_AXIS));
+		panel3.add(author);
+		panel3.add(github);
+		panel3.add(space);
+		panel3.add(year);
+		tabbedPane.addTab("About", panel3);
+
+		//Add hyperlink to github label
+		github.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				try{
+					Desktop.getDesktop().browse(new URI("http://www.github.com/jayden2013"));
+				}
+				catch(Exception ex){
+					System.err.println(ex);
+				}
+			}			
+		});
+		github.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+		//add enter button listener
 		enterButton.addActionListener(EnterMonitor);
+		enterButton.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR)); //lel
+
+		//initialize frame
 		frame.setLayout(new FlowLayout());
-		frame.add(textField);
-		frame.add(enterButton);
-		frame.add(statusArea);
+		frame.add(tabbedPane);
 		frame.pack();
 		frame.setVisible(true);
 
@@ -66,11 +113,11 @@ public class ScrapeUserGUI {
  */
 class TextAreaOutputStream extends OutputStream {
 	private JTextArea textControl;
-	
+
 	public TextAreaOutputStream(JTextArea control){
 		this.textControl = control;
 	}
-	
+
 	public void write(int b) throws IOException {
 		this.textControl.append(String.valueOf((char) b));
 	}

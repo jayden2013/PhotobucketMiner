@@ -139,9 +139,6 @@ public class User {
 					}
 				}
 			}
-			
-			
-			
 		}
 		return this.numPages;
 	}
@@ -194,7 +191,6 @@ public class User {
 									photoLinkList.add(imageURL);
 								}
 								else if (!imageURL.equals(photoLinkList.get(photoLinkList.size() - 1))){
-									//TODO: add the differentiation upon saving the file, that way it's easier. 
 									photoLinkList.add(imageURL);
 								}
 								break;
