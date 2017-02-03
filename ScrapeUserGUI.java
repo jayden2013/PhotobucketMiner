@@ -116,7 +116,7 @@ public class ScrapeUserGUI {
 		panel1.add(endPageField);
 		panel1.add(enterButton);
 
-		tabbedPane.addTab("Z-750 Binary Rifle ", panel1); //for accuracy
+		tabbedPane.addTab("Z-750 Binary Rifle", panel1); //for accuracy
 
 		//Recent Uploads and Search terms
 		JPanel scatterPanel = new JPanel();
