@@ -1,13 +1,11 @@
 # PhotobucketMiner
 Parses and downloads Photobucket's recent uploads and the profiles of the recent uploaders. 
- This utilizes JSoup for grabbing the recent uploads page, and the urls for the pages the images are on.
- However, due to the way Photobucket handles their photos JSoup would not work for getting the direct links to the images. 
- Because of this, a URL, input stream, and buffered reader were used for the second half of this program...in case you were wondering why JSoup wasn't used. 
 
 #Limitations
 <hr>
 Currently, only photos that aren't inside of a directory can be pulled and saved. This will be addressed in future versions.
 <br>
+Tested 100% working on Windows. Mac OS sort of works, but not quite. Linux was tested and 100% working months ago, but has not been tested with recent updates.
 <hr>
 
 #Usage
