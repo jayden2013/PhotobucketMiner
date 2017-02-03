@@ -17,6 +17,8 @@ import org.jsoup.select.Elements;
  *
  */
 public class User {
+	
+	//TODO: Add ability to store number of pages a user has, and read it.
 
 	private ArrayList<String> imageURLs = new ArrayList<String>();
 	private String userURL = "http://";

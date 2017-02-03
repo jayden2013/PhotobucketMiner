@@ -102,10 +102,12 @@ public class ScrapeUserGUI {
 		};
 
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setFocusable(false); //gets rid of ugly dotted line when a tab is selected
 
 		//Main tab
 		JPanel panel1 = new JPanel();
 		JLabel userLabel = new JLabel("User: ");
+		startPageField.setText("1");
 		panel1.add(userLabel);
 		panel1.add(textField);
 		panel1.add(pageLabel);
@@ -118,8 +120,10 @@ public class ScrapeUserGUI {
 
 		//Recent Uploads and Search terms
 		JPanel scatterPanel = new JPanel();
-		JTextField searchTermText = new JTextField(20);
 		JButton searchButton = new JButton("Scrape Search Term");
+		JTextField searchTermText = new JTextField(20);
+		JTextField scatterPages = new JTextField(3);
+
 		searchButton.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
 		//when the button is pressed, being the parsing.
@@ -128,29 +132,43 @@ public class ScrapeUserGUI {
 				//change button
 				searchButton.setText("SCRAPING...");
 				searchButton.setForeground(Color.RED);
-				
+
 				String args[];
-				if (searchTermText.getText().equals("")){
+				if (searchTermText.getText().equals("")){ //if no search term.
 					args = new String[1];
-					args[0] = "1";
+					if (scatterPages.getText().equals("")){ //if the textfield is empty, default to 1.
+						args[0] = "1";
+					}
+					else{
+						args[0] = scatterPages.getText(); //if not empty, use field.
+					}
 					RecentUploads.main(args);
 				}
-				else{
+				else{ //if there is a search term.
 					args = new String[2];
-					args[0] = "1";
+					if (scatterPages.getText().equals("")){ //if the textfield is empty, default to 1.
+						args[0] = "1";
+					}
+					else{
+						args[0] = scatterPages.getText(); //if not empty, use field.
+					}
 					args[1] = searchTermText.getText();
 					RecentUploads.main(args);
 				}
-				
+
 				//reset button
 				searchButton.setText("Scrape Search Term");
 				searchButton.setForeground(Color.BLACK);
 			}
 		});
-		
+
 		JLabel searchLabel = new JLabel("Search: ");
+		JLabel numScatterPages = new JLabel("# of pages: ");
+		scatterPages.setText("1");
 		scatterPanel.add(searchLabel);
 		scatterPanel.add(searchTermText);
+		scatterPanel.add(numScatterPages);
+		scatterPanel.add(scatterPages);
 		scatterPanel.add(searchButton);
 		tabbedPane.addTab("Z-180 Scattershot", scatterPanel); //sometimes you'll hit something
 
@@ -183,7 +201,7 @@ public class ScrapeUserGUI {
 				catch(Exception ex){
 					System.err.println(ex);
 				}
-			}			
+			}
 		});
 		author.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
