@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -33,6 +34,12 @@ public class RecentUploads {
 		if (args.length == 2){
 			setSearchTerm(args[1]);
 		}
+		
+		//Check if Photobucket is up or down.
+		PBisDown isDown = new PBisDown();
+		if (isDown.isDown()){
+			System.err.println("Photobucket appears to be down. Continuing anyway...");
+		}
 
 		int pageNumber = 1; //initial page number.
 		int numberOfPages = 0;
@@ -49,7 +56,7 @@ public class RecentUploads {
 			URL += pageNumber;
 			try {
 				// Get entire document
-				org.jsoup.nodes.Document photobucket = Jsoup.connect(URL).get();
+				Document photobucket = Jsoup.connect(URL).get();
 
 				// Put document into an element
 				Elements photo = photobucket.getElementsByTag("script");

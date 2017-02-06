@@ -12,11 +12,18 @@ public class ScrapeUser {
 			System.err.println(usage());
 			return;
 		}
+		
+		PBisDown isDown = new PBisDown();
+		if (isDown.isDown()){
+			System.err.println("Photobucket appears to be down. Continuing anyway...");
+		}
+		
 		String username = args[0];
 		System.out.println("WILL ATTEMPT TO PARSE USER: " + username);
 		String url = "photobucket.com/user/" + username + "/library/";
 		User user = new User(url);
 		user.setUsername(username);
+		user.createLog();
 		if (args.length == 2){ //if the user wants a start page
 			user.setCurrentPage(Integer.parseInt(args[1]));
 		}

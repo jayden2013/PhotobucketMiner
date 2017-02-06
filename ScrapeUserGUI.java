@@ -1,16 +1,20 @@
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -40,6 +44,7 @@ public class ScrapeUserGUI {
 			System.err.println(e1);
 		}
 		JFrame frame = new JFrame("PhotobucketMiner " + VERSION);
+		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JTextField textField = new JTextField(20);
@@ -102,11 +107,60 @@ public class ScrapeUserGUI {
 		};
 
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setPreferredSize(new Dimension(700,300));
 		tabbedPane.setFocusable(false); //gets rid of ugly dotted line when a tab is selected
 
 		//Main tab
 		JPanel panel1 = new JPanel();
 		JLabel userLabel = new JLabel("User: ");
+		JButton lockOn = new JButton("Lock On");
+
+		//Action listener for lock on button
+		ActionListener lockOnActionListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				panel1.add(enterButton); //add the enter button
+				panel1.remove(lockOn); //get rid of the lock on button
+				String userLock = textField.getText();
+				System.out.println("Locked on to " + userLock);
+				File folder = new File(".");
+				if (folder.isDirectory()){
+					File logFile = new File(".\\" + userLock + "_log.pblog");
+					if (logFile.exists()){
+						System.out.println("Found a log file.");
+						try {
+							System.out.println("Reading log file.");
+							Scanner scan = new Scanner(logFile);
+							JPanel logPanel = new JPanel();
+							JTextArea logArea = new JTextArea();
+							//show contents of log file
+							logArea.setText("Number of pages last time user was scraped: " + scan.nextLine() + ".\n" +
+									"User was last scraped on: " + scan.nextLine());
+							scan.close();
+							logPanel.add(logArea);								
+							tabbedPane.addTab("Log file found for " + userLock + "!", logPanel);
+							//	panel1.add(logLabel);
+						} catch (FileNotFoundException e1) {
+							System.out.println("Could not read log file.");
+						}
+					}
+				}
+			}
+		};
+
+		//Check the status of Photobucket
+		PBisDown check = new PBisDown();
+		if (check.isDown()){
+			System.out.println("Photobucket appears to be down!");
+			JLabel isDown = new JLabel("Photobucket appears to be down!");
+			isDown.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			isDown.setForeground(Color.RED);
+			panel1.add(isDown);
+		}
+		else{
+			System.out.println("Photobucket is up and running.");
+		}
+
+		lockOn.addActionListener(lockOnActionListener);
 		startPageField.setText("1");
 		panel1.add(userLabel);
 		panel1.add(textField);
@@ -114,7 +168,7 @@ public class ScrapeUserGUI {
 		panel1.add(startPageField);
 		panel1.add(throughLabel);
 		panel1.add(endPageField);
-		panel1.add(enterButton);
+		panel1.add(lockOn);
 
 		tabbedPane.addTab("Z-750 Binary Rifle", panel1); //for accuracy
 

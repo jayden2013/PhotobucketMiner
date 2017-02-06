@@ -1,8 +1,13 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -17,7 +22,7 @@ import org.jsoup.select.Elements;
  *
  */
 public class User {
-	
+
 	//TODO: Add ability to store number of pages a user has, and read it.
 
 	private ArrayList<String> imageURLs = new ArrayList<String>();
@@ -27,6 +32,7 @@ public class User {
 	private int numPages = 1;
 	private int currentPage = 1;
 	private final int TOLERANCE = 4; //4 seems like a good tolerance, because the duplicates tend to be 3 to 5...
+	private File log;
 
 	public User(String url) {
 		this.userURL += url + "?sort=3&page=1"; //the last part is needed to increment the URL.
@@ -36,6 +42,51 @@ public class User {
 		catch(Exception e){
 			System.out.println(e);
 			System.err.println("User created, but failed to fetch number of pages.");
+		}
+	}
+
+
+	/**
+	 * Creates a log file to track details about the account.
+	 */
+	public void createLog(){
+
+		try {
+			this.log = new File(this.username + "_log.pblog");
+			this.log.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (this.log.exists()){
+			try {
+				PrintWriter writer = new PrintWriter(this.log, "UTF-8");
+				writer.println(this.numPages);
+				writer.println(new Date());
+				writer.close();
+			} catch (FileNotFoundException | UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}			
+		}
+
+	}
+
+	/**
+	 * Reads a log file.
+	 */
+	public void readLog(){
+		if (this.log.exists()){
+			try {
+				Scanner scan = new Scanner(this.log);
+				int savedPageNumber = scan.nextInt();
+				scan.close();
+				System.out.println(savedPageNumber);
+			} catch (FileNotFoundException e) {
+				System.err.println("Failed to read log file.");
+				e.printStackTrace();
+			}
+		}
+		else{
+			System.out.println("No user log saved.");
 		}
 	}
 
@@ -249,7 +300,7 @@ public class User {
 				}
 
 				//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
-				//Because seperate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
+				//Because separate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
 
 			} catch (IOException e) {
 				System.err.println("User Connection Error.");
