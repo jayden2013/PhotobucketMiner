@@ -4,6 +4,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+/**
+ * A class that stores information about Photobucket.com
+ * @author Jayden Weaver
+ *
+ */
 public class PBisDown {
 
 	private String url = "http://isitdownorjust.me/photobucket-com/"; //Website to use to check if Photobucket is down.
@@ -13,7 +18,7 @@ public class PBisDown {
 		try {
 			Document photobucket = Jsoup.connect(url).get();
 			Elements elements = photobucket.getElementsContainingText("Photobucket.com seems to be down.");
-			
+
 			if (elements.isEmpty()){
 				this.isDown = false;
 			}

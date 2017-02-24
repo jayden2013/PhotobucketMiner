@@ -33,6 +33,8 @@ public class User {
 	private int currentPage = 1;
 	private final int TOLERANCE = 4; //4 seems like a good tolerance, because the duplicates tend to be 3 to 5...
 	private File log;
+	private ArrayList<String> imagesOfInterest = new ArrayList<String>();
+	private boolean SSCFlag = false;
 
 	public User(String url) {
 		this.userURL += url + "?sort=3&page=1"; //the last part is needed to increment the URL.
@@ -43,6 +45,14 @@ public class User {
 			System.out.println(e);
 			System.err.println("User created, but failed to fetch number of pages.");
 		}
+	}
+
+	/**
+	 * Returns the images who match desired properties.
+	 * @return
+	 */
+	public ArrayList<String> getImagesOfInterest(){
+		return this.imagesOfInterest;
 	}
 
 
@@ -155,6 +165,14 @@ public class User {
 	 */
 	public void setNumberOfPages(int i){
 		this.numPages = i;
+	}
+
+	/**
+	 * Set the SSCFlag to analyze images for SSCs.
+	 * @param flag
+	 */
+	public void setSSCFlag(boolean flag){
+		this.SSCFlag = flag;
 	}
 
 	/**
@@ -290,6 +308,15 @@ public class User {
 								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");					
 								ImageIO.write(photoJoto,"jpg", outputFile);
 							}
+
+							//Check if flag is set and analyze image if so...
+							if (SSCFlag){
+								ImageAnalyzer ia = new ImageAnalyzer(outputFile);
+								if (ia.isSSN()){
+									imagesOfInterest.add(outputFile.toString() + " Confidence: " + ia.getConfidence() + "%");
+								}
+							}
+
 							this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
 							System.out.println("SAVED: " + s);
 						} catch(Exception e){

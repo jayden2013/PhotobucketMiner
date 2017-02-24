@@ -23,6 +23,7 @@ import org.jsoup.select.Elements;
 public class RecentUploads {
 	//URL to get
 	static String URL = "http://www.photobucket.com/recentuploads?page=";
+	static boolean analyzeSSC = false;
 
 	public static void main(String[] args) {
 		if (args.length < 1 || args.length > 2){
@@ -32,9 +33,14 @@ public class RecentUploads {
 
 		//Check if arguments contain a search term.
 		if (args.length == 2){
-			setSearchTerm(args[1]);
+			if (args[1].equals("-ssc")){
+				setSSCFlag();
+			}
+			else{
+				setSearchTerm(args[1]);
+			}
 		}
-		
+
 		//Check if Photobucket is up or down.
 		PBisDown isDown = new PBisDown();
 		if (isDown.isDown()){
@@ -221,7 +227,16 @@ public class RecentUploads {
 						}
 					}
 					if (!purge){
+						user.setSSCFlag(analyzeSSC);
 						user.parseUser();
+						//display any images that match specified properties.
+						if (analyzeSSC){
+							ArrayList<String> tmp = user.getImagesOfInterest();
+							System.out.println("Found " + tmp.size() + " images that matched specified properties: ");
+							for (String s : tmp){
+								System.out.println(s);
+							}
+						}
 					}
 					//keep track of profiles we've already parsed.
 					oldProfileLinkArray.add(profileLink);
@@ -231,10 +246,16 @@ public class RecentUploads {
 			} catch (IOException e) {
 				System.err.println("Connection Failure.");
 			}
-
 			pageNumber++;
 		}
 
+	}
+
+	/**
+	 * Sets the SSCFlag to true.
+	 */
+	public static void setSSCFlag(){
+		analyzeSSC = true;
 	}
 
 	/**
