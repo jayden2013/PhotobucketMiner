@@ -29,15 +29,23 @@ public class ImageAnalyzer {
 	//SSC threshold
 	final int SSNTHRESHOLD = 30000;
 	double confidence = 0.0;
+	int height = 0;
+	int width = 0;
+	int numPixels = 0;
+	int topPixels = 0;
 
 	public ImageAnalyzer(File f){
 		this.file = f;
 		try {
 			BufferedImage image = ImageIO.read(file);
 			int x = 0, y = 0;
+			this.height = image.getHeight();
+			this.width = image.getWidth();
+			this.numPixels = this.height * this.width;
+			this.topPixels = numPixels / 3; //the top portion of a SSC is about a thirdish.
 
-			while (y < image.getHeight()){
-				while (x < image.getWidth()){
+			while (y < this.height){
+				while (x < this.width){
 					int colorVal = image.getRGB(x, y);
 					this.color = new Color(colorVal);
 					this.colorArray.add(color);
@@ -71,28 +79,34 @@ public class ImageAnalyzer {
 			int green = colorArray.get(i).getGreen();
 			int blue = colorArray.get(i).getBlue();
 
-			//Check Center portion
-			if (red > SSNRED - TOLERANCE && red < SSNRED + TOLERANCE){
-				this.probability++;
+			if (i <= topPixels){
+				//Check top portion
+				if (red > SSNREDTOP - TOLERANCE && red < SSNREDTOP + TOLERANCE){
+					this.probability++;
+				}
+				if (green > SSNGREENTOP - TOLERANCE && green < SSNGREENTOP + TOLERANCE){
+					this.probability++;
+				}
+				if (blue > SSNBLUETOP - TOLERANCE && blue < SSNBLUETOP + TOLERANCE){
+					this.probability++;
+				}				
 			}
-			if (green > SSNGREEN - TOLERANCE && green < SSNGREEN + TOLERANCE){
-				this.probability++;
-			}
-			if (blue > SSNBLUE - TOLERANCE && blue < SSNBLUE + TOLERANCE){
-				this.probability++;
-			}
-
-			//Check top portion
-			if (red > SSNREDTOP - TOLERANCE && red < SSNREDTOP + TOLERANCE){
-				this.probability++;
-			}
-			if (green > SSNGREENTOP - TOLERANCE && green < SSNGREENTOP + TOLERANCE){
-				this.probability++;
-			}
-			if (blue > SSNBLUETOP - TOLERANCE && blue < SSNBLUETOP + TOLERANCE){
-				this.probability++;
-			}
+			else{
+				//Check Center portion
+				if (red > SSNRED - TOLERANCE && red < SSNRED + TOLERANCE){
+					this.probability++;
+				}
+				if (green > SSNGREEN - TOLERANCE && green < SSNGREEN + TOLERANCE){
+					this.probability++;
+				}
+				if (blue > SSNBLUE - TOLERANCE && blue < SSNBLUE + TOLERANCE){
+					this.probability++;
+				}
+			}			
 		}
+
+		//calculate confidence level
+		getConfidence();
 
 		//Set isLikely
 		if (probability >= SSNTHRESHOLD){
@@ -100,7 +114,7 @@ public class ImageAnalyzer {
 		}
 		else{
 			this.isLikely = false;
-		}		
+		}
 	}
 
 	/**
@@ -131,6 +145,9 @@ public class ImageAnalyzer {
 		}
 		else{
 			this.confidence = 100 + (cl / this.probability);
+			if (this.confidence <= 0){
+				this.confidence = 100;
+			}
 		}
 		return this.confidence;
 	}
