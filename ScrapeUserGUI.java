@@ -18,6 +18,7 @@ import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,6 +55,9 @@ public class ScrapeUserGUI {
 		JTextField startPageField = new JTextField(3);
 		JLabel throughLabel = new JLabel("through");
 		JTextField endPageField = new JTextField(3);
+		JCheckBox SSCCheckBox = new JCheckBox("Scan for SSC");
+		SSCCheckBox.setFocusable(false); //get rid of ugly outline after click.
+
 		///////////////////////////////////////////////////////////////////
 		// http://stackoverflow.com/questions/19834155/jtextarea-as-console
 		PrintStream out = new PrintStream(new TextAreaOutputStream(statusArea));
@@ -96,9 +100,8 @@ public class ScrapeUserGUI {
 						return;
 					}
 					user.setNumberOfPages(Integer.parseInt(endPageField.getText()));
-
 				}
-
+				user.setSSCFlag(SSCCheckBox.isSelected()); //set flag to true if check box is checked.
 				user.setUsername(username);
 				user.parseUser();
 				enterButton.setText("Scrape User"); //reset button text after scraping
@@ -145,8 +148,21 @@ public class ScrapeUserGUI {
 					}
 				}
 			}
-		};
+		};	
 
+		//Action listener for SSC checkbox
+		ActionListener sscCheckBoxListener = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (SSCCheckBox.getForeground().equals(Color.BLACK)){
+					SSCCheckBox.setForeground(Color.RED);
+				}
+				else{
+					SSCCheckBox.setForeground(Color.BLACK);
+				}
+			}
+		};
+		SSCCheckBox.addActionListener(sscCheckBoxListener);
+		
 		//Check the status of Photobucket
 		PBisDown check = new PBisDown();
 		if (check.isDown()){
@@ -168,6 +184,7 @@ public class ScrapeUserGUI {
 		panel1.add(startPageField);
 		panel1.add(throughLabel);
 		panel1.add(endPageField);
+		panel1.add(SSCCheckBox);
 		panel1.add(lockOn);
 
 		tabbedPane.addTab("Z-750 Binary Rifle", panel1); //for accuracy
