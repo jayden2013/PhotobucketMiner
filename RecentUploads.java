@@ -62,8 +62,8 @@ public class RecentUploads {
 			URL += pageNumber;
 			try {
 				// Get entire document
-				Document photobucket = Jsoup.connect(URL).get();
-
+				Document photobucket = Jsoup.connect(URL).timeout(10000).get(); //Added a timeout, because photobucket is a slow website smh.
+				
 				// Put document into an element
 				Elements photo = photobucket.getElementsByTag("script");
 
@@ -245,6 +245,7 @@ public class RecentUploads {
 
 			} catch (IOException e) {
 				System.err.println("Connection Failure.");
+				System.out.println(e);
 			}
 			pageNumber++;
 		}

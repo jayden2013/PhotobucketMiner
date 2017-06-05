@@ -16,7 +16,7 @@ public class PBisDown {
 
 	public PBisDown() {
 		try {
-			Document photobucket = Jsoup.connect(url).get();
+			Document photobucket = Jsoup.connect(url).timeout(10000).get();
 			Elements elements = photobucket.getElementsContainingText("Photobucket.com seems to be down.");
 
 			if (elements.isEmpty()){
