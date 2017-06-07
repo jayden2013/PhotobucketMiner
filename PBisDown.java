@@ -18,14 +18,7 @@ public class PBisDown {
 		try {
 			Document photobucket = Jsoup.connect(url).timeout(10000).get();
 			Elements elements = photobucket.getElementsContainingText("Photobucket.com seems to be down.");
-
-			if (elements.isEmpty()){
-				this.isDown = false;
-			}
-			else{
-				this.isDown = true;
-			}
-
+			this.isDown = !elements.isEmpty();
 		} catch (IOException e) {
 			System.err.println("Failed to connect to remote server.");
 			return;
@@ -37,6 +30,6 @@ public class PBisDown {
 	 * @return
 	 */
 	public boolean isDown(){
-		return isDown;
+		return this.isDown;
 	}
 }

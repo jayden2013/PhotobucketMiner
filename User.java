@@ -331,6 +331,7 @@ public class User {
 
 			} catch (IOException e) {
 				System.err.println("User Connection Error.");
+				System.out.println(e);
 				break;
 			}
 			System.out.println("FINISHED PAGE " + currentPage + " OF " + numPages);
