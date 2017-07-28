@@ -20,7 +20,7 @@ public class PBisDown {
 			Elements elements = photobucket.getElementsContainingText("Photobucket.com seems to be down.");
 			this.isDown = !elements.isEmpty();
 		} catch (IOException e) {
-			System.err.println("Failed to connect to remote server.");
+			System.err.println("Unable to verify status of Photobucket. Failed to connect to remote server.");
 			return;
 		}
 	}
