@@ -17,7 +17,8 @@ public class ImageAnalyzer {
 	ArrayList<Color> colorArray = new ArrayList<Color>();
 	double probability = 0.0;
 	boolean isLikely = false;
-	final int TOLERANCE = 10;
+	boolean isBetwixt = false;
+	final int TOLERANCE = 8;
 	//Center of SSC
 	final int SSNRED = 202;
 	final int SSNGREEN = 225;
@@ -28,6 +29,8 @@ public class ImageAnalyzer {
 	final int SSNBLUETOP = 153;
 	//SSC threshold
 	final int SSNTHRESHOLD = 30000;
+	final int CARDPERCENTAGE = 1000;
+	final int BETWIXTVALUE = 15000;
 	double confidence = 0.0;
 	int height = 0;
 	int width = 0;
@@ -81,26 +84,73 @@ public class ImageAnalyzer {
 
 			if (i <= topPixels){
 				//Check top portion
-				if (red > SSNREDTOP - TOLERANCE && red < SSNREDTOP + TOLERANCE){
-					this.probability++;
+				if (red > SSNREDTOP - TOLERANCE && red < SSNREDTOP + TOLERANCE && green > SSNGREENTOP - TOLERANCE && green < SSNGREENTOP + TOLERANCE && blue > SSNBLUETOP - TOLERANCE && blue < SSNBLUETOP + TOLERANCE){
+					this.probability += 2;
+					if (red > SSNREDTOP - TOLERANCE / 2 && red < SSNREDTOP + TOLERANCE / 2){
+						this.probability += 2;
+						if (red == SSNREDTOP){
+							this.probability += 2;
+						}
+					}
 				}
-				if (green > SSNGREENTOP - TOLERANCE && green < SSNGREENTOP + TOLERANCE){
-					this.probability++;
+				else{
+					if (red > SSNREDTOP - TOLERANCE && red < SSNREDTOP + TOLERANCE){
+						this.probability++;
+						if (red > SSNREDTOP - TOLERANCE / 2 && red < SSNREDTOP + TOLERANCE / 2){
+							this.probability++;
+							if (red == SSNREDTOP){
+								this.probability++;
+							}
+						}
+					}
+					if (green > SSNGREENTOP - TOLERANCE && green < SSNGREENTOP + TOLERANCE){
+						this.probability++;
+						if (green > SSNGREENTOP - TOLERANCE / 2 && green < SSNGREENTOP + TOLERANCE / 2){
+							this.probability++;
+							if (green == SSNGREENTOP){
+								this.probability++;
+							}
+						}
+					}
+					if (blue > SSNBLUETOP - TOLERANCE && blue < SSNBLUETOP + TOLERANCE){
+						this.probability++;
+						if (blue > SSNBLUETOP - TOLERANCE / 2 && blue < SSNBLUETOP + TOLERANCE / 2){
+							this.probability++;
+							if (blue == SSNBLUETOP){
+								this.probability++;
+							}
+						}
+					}			
 				}
-				if (blue > SSNBLUETOP - TOLERANCE && blue < SSNBLUETOP + TOLERANCE){
-					this.probability++;
-				}				
 			}
 			else{
 				//Check Center portion
 				if (red > SSNRED - TOLERANCE && red < SSNRED + TOLERANCE){
 					this.probability++;
+					if (red > SSNRED - TOLERANCE / 2 && red < SSNRED + TOLERANCE / 2){
+						this.probability++;
+						if (red == SSNRED){
+							this.probability++;
+						}
+					}
 				}
 				if (green > SSNGREEN - TOLERANCE && green < SSNGREEN + TOLERANCE){
 					this.probability++;
+					if (green > SSNGREEN - TOLERANCE / 2 && green < SSNGREEN + TOLERANCE / 2){
+						this.probability++;
+						if (green == SSNGREEN){
+							this.probability++;
+						}
+					}
 				}
 				if (blue > SSNBLUE - TOLERANCE && blue < SSNBLUE + TOLERANCE){
 					this.probability++;
+					if (blue > SSNBLUE - TOLERANCE / 2 && blue < SSNBLUE + TOLERANCE / 2){
+						this.probability++;
+						if (blue == SSNBLUE){
+							this.probability++;
+						}
+					}
 				}
 			}			
 		}
@@ -109,12 +159,25 @@ public class ImageAnalyzer {
 		getConfidence();
 
 		//Set isLikely
-		if (probability >= SSNTHRESHOLD){
+		if (this.confidence < this.CARDPERCENTAGE){
 			this.isLikely = true;
 		}
 		else{
 			this.isLikely = false;
 		}
+
+		//If the confidence is close to the card percentage threshold and not set as likely, set betwixt
+		if (this.CARDPERCENTAGE > this.confidence - this.BETWIXTVALUE && !this.isLikely){
+			this.isBetwixt = true;
+		}
+	}
+
+	/**
+	 * Returns true if the image was a close call.
+	 * @return
+	 */
+	public boolean isBetwixt(){
+		return this.isBetwixt;
 	}
 
 	/**
@@ -138,17 +201,7 @@ public class ImageAnalyzer {
 	 * @return confidence
 	 */
 	public double getConfidence(){
-		this.confidence = 100 - this.probability;
-		int cl = -100000;
-		if (this.probability <= 0){
-			this.confidence = 100;
-		}
-		else{
-			this.confidence = 100 + (cl / this.probability);
-			if (this.confidence <= 0){
-				this.confidence = 100;
-			}
-		}
+		this.confidence = (this.SSNTHRESHOLD - this.probability);
 		return this.confidence;
 	}
 

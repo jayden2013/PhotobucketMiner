@@ -55,7 +55,6 @@ public class User {
 		return this.imagesOfInterest;
 	}
 
-
 	/**
 	 * Creates a log file to track details about the account.
 	 */
@@ -313,7 +312,10 @@ public class User {
 							if (SSCFlag){
 								ImageAnalyzer ia = new ImageAnalyzer(outputFile);
 								if (ia.isSSN()){
-									imagesOfInterest.add(outputFile.toString() + " Confidence: " + ia.getConfidence() + "%");
+									imagesOfInterest.add("POSSIBLE MATCH: " + outputFile.toString());
+								}
+								else if (ia.isBetwixt){
+									imagesOfInterest.add("UNSURE: " + outputFile.toString());
 								}
 							}
 

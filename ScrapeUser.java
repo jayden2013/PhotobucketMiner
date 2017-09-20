@@ -36,7 +36,18 @@ public class ScrapeUser {
 			user.setCurrentPage(Integer.parseInt(args[1]));
 			user.setNumberOfPages(Integer.parseInt(args[2]));
 		}
-		user.parseUser();		
+		user.parseUser();
+		System.out.println("RESULTS OF SSC SCAN:");
+		if (!user.getImagesOfInterest().isEmpty()){
+			for (String s : user.getImagesOfInterest()){
+				System.out.println(s);
+			}
+		}
+		else{
+			System.out.println("Found no images that match the specified properties.");
+		}
+		
+		
 	}
 
 	/**
