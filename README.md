@@ -2,16 +2,16 @@
 Parses and downloads Photobucket's recent uploads and the profiles of the recent uploaders. Specific users can be targeted, and images with certain properties can be targeted.
 
 # Limitations
-<hr>
+<hr />
 Currently, only photos that aren't inside of a directory can be pulled and saved. This will be addressed in future versions.
 <br>
 Tested 100% working on Windows. Mac OS sort of works, but not quite. Linux was tested and 100% working months ago, but has not been tested with recent updates.
-<hr>
+<hr />
 
 # Usage
-<hr>
+<hr />
 For running the main program, which fetches the RecentUploaders and downloads their images:
-<hr>
+<hr />
 ### Windows:
 <br>
 javac -classpath .;jsoup-1.8.3.jar *.java
@@ -23,9 +23,9 @@ java -classpath .;jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
 javac -classpath .:jsoup-1.8.3.jar *.java
 <br>
 java -classpath .:jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
-<hr>
+<hr />
 For downloading the images of specified accounts:
-<hr>
+<hr />
 ### Windows:
 <br>
 javac -classpath .;jsoup-1.8.3.jar *.java
