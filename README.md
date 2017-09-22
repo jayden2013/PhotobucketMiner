@@ -12,7 +12,7 @@ Tested 100% working on Windows. Mac OS sort of works, but not quite. Linux was t
 <hr>
 For running the main program, which fetches the RecentUploaders and downloads their images:
 <hr>
-### On Windows:
+### Windows:
 <br>
 javac -classpath .;jsoup-1.8.3.jar *.java
 <br>
@@ -26,7 +26,7 @@ java -classpath .:jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
 <hr>
 For downloading the images of specified accounts:
 <hr>
-### On Windows:
+### Windows:
 <br>
 javac -classpath .;jsoup-1.8.3.jar *.java
 <br>
