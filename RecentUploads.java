@@ -63,7 +63,7 @@ public class RecentUploads {
 			try {
 				// Get entire document
 				Document photobucket = Jsoup.connect(URL).timeout(10000).get(); //Added a timeout, because photobucket is a slow website smh.
-				
+
 				// Put document into an element
 				Elements photo = photobucket.getElementsByTag("script");
 
@@ -183,7 +183,9 @@ public class RecentUploads {
 						// now, parse..
 						directLink = directLink.substring(40, directLink.length() - 4);
 						losLinksArray.add(directLink);
-						//System.out.println(directLink);
+						String profileLink;
+
+						/* REMOVED 10/2017, ACTUALLY CAUSES PROBLEMS NOW
 						String profileLink = directLink.substring(7, 13);
 						if (profileLink.endsWith("p")){
 							profileLink = profileLink.substring(0, profileLink.length() - 1);
@@ -191,8 +193,9 @@ public class RecentUploads {
 						else if (profileLink.endsWith("h")){ //This is to fix the problem where links with a shorter string of characters before the domain name would become corrupted. 
 							profileLink = profileLink.substring(0, profileLink.length() - 2);
 						}
+						 */
 
-						profileLink += "photobucket.com/" + "user/" + usernameArray.get(urls) + "/library/"; // parse the url to the user's profile. this can be used later on to download all of the user's photos.
+						profileLink = "photobucket.com/" + "user/" + usernameArray.get(urls) + "/library/"; // parse the url to the user's profile. this can be used later on to download all of the user's photos.
 						//until then, we will display the link after we're done.
 						//add to an arraylist
 						profileLinkArray.add(profileLink);
