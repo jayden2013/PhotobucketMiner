@@ -9,23 +9,23 @@ For running the main program, which fetches the RecentUploaders and downloads th
 
 ### Windows:
 
-javac -classpath .;jsoup-1.8.3.jar *.java  
-java -classpath .;jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>
+javac -classpath .;* *.java  
+java -classpath .;* RecentUploads \<number of pages to parse\>
 
 ### Linux / Mac OS:
-javac -classpath .:jsoup-1.8.3.jar *.java  
-java -classpath .:jsoup-1.8.3.jar RecentUploads \<number of pages to parse\>  
+javac -classpath .:* *.java  
+java -classpath .:* RecentUploads \<number of pages to parse\>  
 
 For downloading the images of specified accounts:  
 
 ### Windows:  
-javac -classpath .;jsoup-1.8.3.jar *.java  
-java -classpath .;jsoup-1.8.3.jar ScrapeUser \<username\> [starting page] [ending page]  
+javac -classpath .;* *.java  
+java -classpath .;* ScrapeUser \<username\> [starting page] [ending page]  
 
-GUI: java -classpath .;jsoup-1.8.3.jar ScrapeUserGUI  
+GUI: java -classpath .;* ScrapeUserGUI  
 
 ### Linux / Mac OS:
-javac -classpath .:jsoup-1.8.3.jar *.java  
-java -classpath .:jsoup-1.8.3.jar ScrapeUser \<username\> [starting page] [ending page]  
+javac -classpath .:* *.java  
+java -classpath .:* ScrapeUser \<username\> [starting page] [ending page]  
 
-GUI: java -classpath .:jsoup-1.8.3.jar ScrapeUserGUI
+GUI: java -classpath .:* ScrapeUserGUI

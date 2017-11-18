@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -165,6 +166,10 @@ public class ImageAnalyzer {
 		else{
 			this.isLikely = false;
 		}
+		
+		//Update Database
+		Database database = new Database("buckets.mdb");
+		database.insert("INSERT INTO PHOTOS VALUES('0', '" + this.file.getPath() + " ', '" + this.isLikely + "', '" + LocalDate.now() + "')");
 
 		//If the confidence is close to the card percentage threshold and not set as likely, set betwixt
 		if (this.CARDPERCENTAGE > this.confidence - this.BETWIXTVALUE && !this.isLikely){

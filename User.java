@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -45,6 +46,7 @@ public class User {
 			System.out.println(e);
 			System.err.println("User created, but failed to fetch number of pages.");
 		}
+		
 	}
 
 	/**
@@ -105,6 +107,9 @@ public class User {
 	 */
 	public void setUsername(String un){
 		this.username = un;
+		//Add to Database here, because in constructor, username is not set.
+		Database database = new Database("buckets.mdb");
+		database.insert("INSERT INTO ACCOUNTS VALUES('0', '" + this.username + " ', '" + this.numPages + "', '" + LocalDate.now() + "', '" + this.userURL + "')");
 	}
 
 	/**
