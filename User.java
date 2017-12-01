@@ -109,7 +109,7 @@ public class User {
 		this.username = un;
 		//Add to Database here, because in constructor, username is not set.
 		Database database = new Database("buckets.mdb");
-		database.insert("INSERT INTO ACCOUNTS VALUES('0', '" + this.username + " ', '" + this.numPages + "', '" + LocalDate.now() + "', '" + this.userURL + "')");
+		database.insert("INSERT INTO ACCOUNTS VALUES('0', '" + this.username + " ', '" + this.numPages + "', '" + LocalDate.now() + "', '" + this.userURL + "', '0" + "')");
 	}
 
 	/**
@@ -342,6 +342,9 @@ public class User {
 				break;
 			}
 			System.out.println("FINISHED PAGE " + currentPage + " OF " + numPages);
+			//Update Last Parsed Page in Database
+			Database database = new Database("buckets.mdb");
+			database.insert("UPDATE ACCOUNTS SET LAST_PAGE = '" + this.currentPage + "' WHERE UNAME = '" + this.username + "';");
 			currentPage++;
 			incrementURL();
 		}

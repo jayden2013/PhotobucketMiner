@@ -68,10 +68,11 @@ public class RecentUploads {
 				Elements photo = photobucket.getElementsByTag("script");
 
 				// Get only the section we want, put it into an element of its own.
-				Element script = photo.get(photo.size() - 12); //Changed from 11 to 12, because photobucket added advertisements, which upset the offset. Fixed 10/2016.
+				Element script = photo.get(photo.size() - 13); //Changed from 11 to 12, because photobucket added advertisements, which upset the offset. Fixed 10/2016.
 				//Changed from 12 to 13, because photobucket sucks. Offset was upset. Fixed 11/2016.
 				//Changed from 13 to 12, because photobucket sucks. Offset was upset. Fixed 12/2016.
 
+				System.out.println(script);
 				// Put the section into a string we can manipulate.
 				String selection = script.toString();
 

@@ -3,7 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 /**
  * Class to manage a database.
@@ -30,6 +30,11 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Executes an SQL Query.
+	 * @param sql
+	 * @return
+	 */
 	public String execute(String sql){
 		try {
 			this.result = this.sqlStatement.executeQuery(sql);
@@ -40,31 +45,71 @@ public class Database {
 
 		return "";
 	}
-	
+
+	/**
+	 * Executes an SQL Query.
+	 * @param sql
+	 */
 	public void insert(String sql){
 		try{
 			this.sqlStatement.execute(sql);
 		}
 		catch(SQLException e){
 			e.printStackTrace();
-			System.out.println("blows up here");
 		}
 	}
 
-	public ArrayList<String> getResults(){
-		ArrayList<String> stringList = new ArrayList<String>();
+//	public ArrayList<String> getResults(){
+//		ArrayList<String> stringList = new ArrayList<String>();
+//		try {
+//			while(this.result.next() == true){
+//				stringList.add(this.result.getString("ID"));
+//				stringList.add(this.result.getString("UNAME"));
+//			}
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return stringList;
+//
+//
+//	}
+
+	/**
+	 * Returns true if database contains duplicate users.
+	 * @param username
+	 * @return
+	 */
+	public boolean hasDuplicate(String username){
 		try {
-			while(this.result.next() == true){
-				stringList.add(this.result.getString("ID"));
-				stringList.add(this.result.getString("UNAME"));
-			}
+			this.result = this.sqlStatement.executeQuery("SELECT COUNT(*) FROM ACCOUNTS WHERE UNAME = '" + username + "';");
+			this.result.next();	
+			return Integer.valueOf(this.result.getString(1)) > 1;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return stringList;
 
+		return false;
+	}
 
+	/**
+	 * Deletes duplicate database entries.
+	 * @param username
+	 * @return
+	 */
+	public boolean purgeDuplicate(String username){
+		try{
+			while(hasDuplicate(username)){
+				this.result = this.sqlStatement.executeQuery("SELECT ID FROM ACCOUNTS WHERE UNAME = '" + username + "';");
+				this.result.next();
+				this.sqlStatement.execute("DELETE FROM ACCOUNTS WHERE ID = '" + this.result.getString(1) + "';");
+			}
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }
