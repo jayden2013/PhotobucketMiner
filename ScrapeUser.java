@@ -47,6 +47,7 @@ public class ScrapeUser {
 			System.out.println("Found no images that match the specified properties.");
 		}
 		
+		
 	}
 
 	/**

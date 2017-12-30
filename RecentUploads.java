@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,7 +24,6 @@ public class RecentUploads {
 	//URL to get
 	static String URL = "http://www.photobucket.com/recentuploads?page=";
 	static boolean analyzeSSC = false;
-	static int ruOffset = 13; //The Offset Number as of 12/2017.
 
 	public static void main(String[] args) {
 		if (args.length < 1 || args.length > 2){
@@ -70,10 +68,9 @@ public class RecentUploads {
 				Elements photo = photobucket.getElementsByTag("script");
 
 				// Get only the section we want, put it into an element of its own.
-				Element script = photo.get(photo.size() - ruOffset); //Changed from 11 to 12, because photobucket added advertisements, which upset the offset. Fixed 10/2016.
+				Element script = photo.get(photo.size() - 12); //Changed from 11 to 12, because photobucket added advertisements, which upset the offset. Fixed 10/2016.
 				//Changed from 12 to 13, because photobucket sucks. Offset was upset. Fixed 11/2016.
 				//Changed from 13 to 12, because photobucket sucks. Offset was upset. Fixed 12/2016.
-				//Changed from 12 to 13, because photobucket sucks. Offset was upset. Fixed 12/2017.
 
 				// Put the section into a string we can manipulate.
 				String selection = script.toString();
@@ -208,15 +205,8 @@ public class RecentUploads {
 				}
 
 				if (linkCount == 0){
-					System.err.println("No links were parsed! This could be due to a change on Photobucket's end."); //Limitation: can't get images inside of directories. Requires more parsing.
-					System.err.println("It's possible that entering a new offset could fix this problem. Your current offset is " + ruOffset + ".");
-					Scanner scan = new Scanner(System.in);
-					System.out.print("Enter a new offset: ");
-					ruOffset = scan.nextInt();
-					scan.close();
-					System.out.println("Attempting to parse links again, with offset " + ruOffset + ".");
-					main(args);
-					return;
+					System.err.println("No links were parsed!"); //Limitation: can't get images inside of directories. Requires more parsing.
+					return; //Don't bother loading a frame if no links were parsed.
 				}
 
 				//Print all of the profile links.
