@@ -49,6 +49,7 @@ public class RecentUploads {
 
 		int pageNumber = 1; //initial page number.
 		int numberOfPages = 0;
+		int recentOffset = -1;
 		try{
 			numberOfPages = Integer.parseInt(args[0]); //number of pages to parse.
 		}
@@ -72,6 +73,18 @@ public class RecentUploads {
 				//Changed from 12 to 13, because photobucket sucks. Offset was upset. Fixed 11/2016.
 				//Changed from 13 to 12, because photobucket sucks. Offset was upset. Fixed 12/2016.
 				//Changed from 12 to 13, because photobucket sucks. Offset was upset. Fixed 12/2017.
+
+				//Automatically Calculate the Offset. Must keep in hardcoded offset in order to manipulate, but this ensures an accurate offset.
+				if (recentOffset == -1){
+					System.out.print("Calculating Recent Uploads Offset...");
+					recentOffset += 2;
+					script = photo.get(photo.size() - recentOffset);
+					while (!script.html().contains("recentPageCollectionData',")){
+						recentOffset++;
+						script = photo.get(photo.size() - recentOffset);
+					}
+					System.out.println(recentOffset);
+				}
 
 				// Put the section into a string we can manipulate.
 				String selection = script.toString();

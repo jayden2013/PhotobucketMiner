@@ -46,6 +46,14 @@ public class User {
 			System.err.println("User created, but failed to fetch number of pages.");
 		}
 	}
+	
+	/**
+	 * Returns the username.
+	 * @return
+	 */
+	public String getUsername(){
+		return this.username;
+	}
 
 	/**
 	 * Returns the images who match desired properties.
@@ -186,7 +194,17 @@ public class User {
 		//get all the script tags and put them in the element.
 		Elements photo = photobucketDocument.getElementsByTag("script");
 		//GET NUMBER OF PAGES. FOR PARSING ENTIRE PROFILES.
-		Element scriptPages = photo.get(photo.size() - 24); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset. 
+		//Element scriptPages = photo.get(photo.size() - 24); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset.
+		int pageOffset = -1;
+		System.out.print("\nCalculating Page Offset...");
+		pageOffset += 2;
+		Element scriptPages = photo.get(photo.size() - pageOffset);
+		while (!scriptPages.html().contains("\"page\":1")){
+			pageOffset++;
+			scriptPages = photo.get(photo.size() - pageOffset);
+		}
+		System.out.println(pageOffset);
+
 		String scriptPagesString = scriptPages.toString();
 		StringTokenizer pageTokenizer = new StringTokenizer(scriptPagesString, ","); //use , as a delimter.
 		String currToken = "", tokenBackup = "";
@@ -205,7 +223,7 @@ public class User {
 				else{
 					currToken = currToken.substring(0,currToken.length() - 1);
 					if (currToken.equals("\"numPages\":")){
-						this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() -3)); //should support three digit, but haven't come across a 3 digit account
+						this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 3)); //should support three digit, but haven't come across a 3 digit account
 					}
 				}
 			}
@@ -217,19 +235,34 @@ public class User {
 	 * Parses the user profile.
 	 */
 	public void parseUser(){
-		
-		//Print username
-		System.out.println("\nATTEMPTING TO PARSE: " + this.username.toUpperCase());
-		
+
+		int userOffset = -1;
 		while(this.currentPage <= this.numPages){
-			System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
+
 			try {
 				//Get entire photobucket page.
 				//Need a user agent in order to get the redirect from photobucket.
 				Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").timeout(10000).get();
 				//get all the script tags and put them in the element.
 				Elements photo = photobucketDocument.getElementsByTag("script");
-				Element script = photo.get(photo.size() - 23); //Magic number. Photobucket loves to change this, but as of 07/2018 this is the offset. 
+				//Element script = photo.get(photo.size() - 23); //Magic number. Photobucket loves to change this, but as of 07/2018 this is the offset. 
+
+				//Automatically calculate the offset to always fetch the correct data.
+				Element script;
+				if (userOffset == -1){
+					System.out.print("Calculating Parse Offset...");
+					userOffset += 2;
+					script = photo.get(photo.size() - userOffset);
+					while (!script.html().contains("libraryAlbumsPageCollectionData")){
+						userOffset++;
+						script = photo.get(photo.size() - userOffset);
+					}
+					System.out.println(userOffset);
+				}
+				
+				System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
+
+				script = photo.get(photo.size() - userOffset);
 
 				String httpParse = "http://";
 				String selection = script.toString();
