@@ -186,7 +186,7 @@ public class User {
 		//get all the script tags and put them in the element.
 		Elements photo = photobucketDocument.getElementsByTag("script");
 		//GET NUMBER OF PAGES. FOR PARSING ENTIRE PROFILES.
-		Element scriptPages = photo.get(photo.size() - 26); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset. 
+		Element scriptPages = photo.get(photo.size() - 24); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset. 
 		String scriptPagesString = scriptPages.toString();
 		StringTokenizer pageTokenizer = new StringTokenizer(scriptPagesString, ","); //use , as a delimter.
 		String currToken = "", tokenBackup = "";
@@ -217,7 +217,10 @@ public class User {
 	 * Parses the user profile.
 	 */
 	public void parseUser(){
-
+		
+		//Print username
+		System.out.println("\nATTEMPTING TO PARSE: " + this.username.toUpperCase());
+		
 		while(this.currentPage <= this.numPages){
 			System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
 			try {
@@ -226,7 +229,7 @@ public class User {
 				Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").timeout(10000).get();
 				//get all the script tags and put them in the element.
 				Elements photo = photobucketDocument.getElementsByTag("script");
-				Element script = photo.get(photo.size() - 25); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset. 
+				Element script = photo.get(photo.size() - 23); //Magic number. Photobucket loves to change this, but as of 07/2018 this is the offset. 
 
 				String httpParse = "http://";
 				String selection = script.toString();
