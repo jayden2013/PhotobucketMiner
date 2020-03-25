@@ -193,7 +193,7 @@ public class RecentUploads {
 						InputStream inStream = url.openStream();
 						if (inStream == null || inStream.read() == -1) {
 							System.out.print(
-									"Fetched URL empty. Possible connection or redirect. Attemping to follow redirect..");
+									"Fetched URL empty. Possible connection issue or redirect. Attemping to follow redirect..");
 							HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 							connection.setInstanceFollowRedirects(true);
 							connection.connect();

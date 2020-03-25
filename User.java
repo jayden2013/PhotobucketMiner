@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -354,9 +355,23 @@ public class User {
 						// Do nothing.
 					} else {
 						try {
-							InputStream is = photoURL.openStream();
+
+							HttpURLConnection connection = (HttpURLConnection) photoURL.openConnection();
+							/*
+							 * Set Request Properties to receive a compatible image, rather than a WebP.
+							 * Photobucket sends WebP now instead of other image formats, unless explicitly
+							 * told to do so. WebP is incompatible with the way we save images. Set User
+							 * Agent to IE 5.5, which does not support WebP format. Set Accept Property to
+							 * compatible image formats.
+							 */
+							connection.setRequestProperty("User-Agent",
+									"Mozilla/4.0 (compatible; MSIE 5.5; AOL 5.0; Windows 95)");
+							connection.setRequestProperty("Accept",
+									"image/jpg, image/jpeg, image/gif, image/png, image/bmp");
+
+							InputStream is = connection.getInputStream();
 							BufferedImage photoJoto = ImageIO.read(is);
-							// TODO: Fix Image Saving
+
 							if (photoJoto == null) {
 								if (photoURL.toString().contains("http")) {
 									System.out.println("Photo issue. The issue may be caused by Photobucket.");
@@ -390,7 +405,6 @@ public class User {
 								ImageIO.write(photoJoto, "gif", outputFile);
 							} else { // if not a png or gif, must be a jpg or jpeg.
 								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");
-								System.out.println("made it here");
 								ImageIO.write(photoJoto, "jpg", outputFile);
 							}
 
