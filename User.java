@@ -2,6 +2,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,7 +25,7 @@ import org.jsoup.select.Elements;
  */
 public class User {
 
-	//TODO: Add ability to store number of pages a user has, and read it.
+	// TODO: Add ability to store number of pages a user has, and read it.
 
 	private ArrayList<String> imageURLs = new ArrayList<String>();
 	private String userURL = "http://";
@@ -31,42 +33,43 @@ public class User {
 	private int numeral = 0;
 	private int numPages = 1;
 	private int currentPage = 1;
-	private final int TOLERANCE = 4; //4 seems like a good tolerance, because the duplicates tend to be 3 to 5...
+	private final int TOLERANCE = 4; // 4 seems like a good tolerance, because the duplicates tend to be 3 to 5...
 	private File log;
 	private ArrayList<String> imagesOfInterest = new ArrayList<String>();
 	private boolean SSCFlag = false;
 
 	public User(String url) {
-		this.userURL += url + "?sort=3&page=1"; //the last part is needed to increment the URL.
-		try{
+		this.userURL += url + "?sort=3&page=1"; // the last part is needed to increment the URL.
+		try {
 			numberOfPages();
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println(e);
 			System.err.println("User created, but failed to fetch number of pages.");
 		}
 	}
-	
+
 	/**
 	 * Returns the username.
+	 * 
 	 * @return
 	 */
-	public String getUsername(){
+	public String getUsername() {
 		return this.username;
 	}
 
 	/**
 	 * Returns the images who match desired properties.
+	 * 
 	 * @return
 	 */
-	public ArrayList<String> getImagesOfInterest(){
+	public ArrayList<String> getImagesOfInterest() {
 		return this.imagesOfInterest;
 	}
 
 	/**
 	 * Creates a log file to track details about the account.
 	 */
-	public void createLog(){
+	public void createLog() {
 
 		try {
 			this.log = new File(this.username + "_log.pblog");
@@ -74,7 +77,7 @@ public class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (this.log.exists()){
+		if (this.log.exists()) {
 			try {
 				PrintWriter writer = new PrintWriter(this.log, "UTF-8");
 				writer.println(this.numPages);
@@ -82,7 +85,7 @@ public class User {
 				writer.close();
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 
 	}
@@ -90,8 +93,8 @@ public class User {
 	/**
 	 * Reads a log file.
 	 */
-	public void readLog(){
-		if (this.log.exists()){
+	public void readLog() {
+		if (this.log.exists()) {
 			try {
 				Scanner scan = new Scanner(this.log);
 				int savedPageNumber = scan.nextInt();
@@ -101,66 +104,71 @@ public class User {
 				System.err.println("Failed to read log file.");
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			System.out.println("No user log saved.");
 		}
 	}
 
 	/**
-	 * Sets the username. 
+	 * Sets the username.
+	 * 
 	 * @param un
 	 */
-	public void setUsername(String un){
+	public void setUsername(String un) {
 		this.username = un;
 	}
 
 	/**
 	 * Returns the entire list of image urls.
+	 * 
 	 * @return an ArrayList containing the URLs to the images on the user profile.
 	 */
-	public ArrayList<String> getImageURLs(){
+	public ArrayList<String> getImageURLs() {
 		return this.imageURLs;
 	}
 
 	/**
 	 * Returns the image URL at a given index.
+	 * 
 	 * @param i
 	 * @return the image URL at a given index.
 	 */
-	public String getImage(int i){
+	public String getImage(int i) {
 		return this.imageURLs.get(i);
 	}
 
 	/**
 	 * Sets the user URL to a given string.
+	 * 
 	 * @param url
 	 */
-	public void setUserURL(String url){
+	public void setUserURL(String url) {
 		this.userURL = url;
 	}
 
 	/**
 	 * Returns the user URL.
+	 * 
 	 * @return the user URL
 	 */
-	public String getUserURL(){
+	public String getUserURL() {
 		return this.userURL;
 	}
 
 	/**
 	 * Increments the user URL.
 	 */
-	public void incrementURL(){
+	public void incrementURL() {
 		this.userURL = this.userURL.substring(0, this.userURL.length() - 1) + this.currentPage;
 	}
 
 	/**
 	 * Sets the current page variable.
+	 * 
 	 * @param i
 	 */
-	public void setCurrentPage(int i){
-		while(this.currentPage < i){
+	public void setCurrentPage(int i) {
+		while (this.currentPage < i) {
 			this.currentPage++;
 			incrementURL();
 		}
@@ -168,62 +176,76 @@ public class User {
 
 	/**
 	 * Manually set the number of pages.
+	 * 
 	 * @param i
 	 */
-	public void setNumberOfPages(int i){
+	public void setNumberOfPages(int i) {
 		this.numPages = i;
 	}
 
 	/**
 	 * Set the SSCFlag to analyze images for SSCs.
+	 * 
 	 * @param flag
 	 */
-	public void setSSCFlag(boolean flag){
+	public void setSSCFlag(boolean flag) {
 		this.SSCFlag = flag;
 	}
 
 	/**
 	 * Parses and returns the number of pages.
+	 * 
 	 * @return number of pages.
 	 * @throws IOException
 	 */
-	public int numberOfPages() throws IOException{
-		//Get entire photobucket page.
-		//Need a user agent in order to get the redirect from photobucket.
-		Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").timeout(10000).get();
-		//get all the script tags and put them in the element.
+	public int numberOfPages() throws IOException {
+		// Get entire photobucket page.
+		// Need a user agent in order to get the redirect from photobucket.
+		Document photobucketDocument = Jsoup.connect(this.userURL).userAgent(
+				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2")
+				.timeout(10000).get();
+		// get all the script tags and put them in the element.
 		Elements photo = photobucketDocument.getElementsByTag("script");
-		//GET NUMBER OF PAGES. FOR PARSING ENTIRE PROFILES.
-		//Element scriptPages = photo.get(photo.size() - 24); //Magic number. Photobucket loves to change this, but as of 01/2017 this is the offset.
+		// GET NUMBER OF PAGES. FOR PARSING ENTIRE PROFILES.
+		// Element scriptPages = photo.get(photo.size() - 24); //Magic number.
+		// Photobucket loves to change this, but as of 01/2017 this is the offset.
 		int pageOffset = -1;
 		System.out.print("\nCalculating Page Offset...");
 		pageOffset += 2;
 		Element scriptPages = photo.get(photo.size() - pageOffset);
-		while (!scriptPages.html().contains("\"page\":1")){
+		while (!scriptPages.html().contains("\"page\":1")) {
 			pageOffset++;
 			scriptPages = photo.get(photo.size() - pageOffset);
 		}
 		System.out.println(pageOffset);
 
 		String scriptPagesString = scriptPages.toString();
-		StringTokenizer pageTokenizer = new StringTokenizer(scriptPagesString, ","); //use , as a delimter.
+		StringTokenizer pageTokenizer = new StringTokenizer(scriptPagesString, ","); // use , as a delimter.
 		String currToken = "", tokenBackup = "";
-		while (pageTokenizer.hasMoreTokens()){
+		while (pageTokenizer.hasMoreTokens()) {
 			currToken = pageTokenizer.nextToken();
 			tokenBackup = currToken;
-			currToken = currToken.substring(0,currToken.length() - 1);
-			if (currToken.equals("\"numPages\":")){
-				this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 1)); //supports one digit 
-			}
-			else{
-				currToken = currToken.substring(0,currToken.length() -1);
-				if (currToken.equals("\"numPages\":")){
-					this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 2)); //supports two digit
-				}
-				else{
-					currToken = currToken.substring(0,currToken.length() - 1);
-					if (currToken.equals("\"numPages\":")){
-						this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 3)); //should support three digit, but haven't come across a 3 digit account
+			currToken = currToken.substring(0, currToken.length() - 1);
+			if (currToken.equals("\"numPages\":")) {
+				this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 1)); // supports one digit
+			} else {
+				currToken = currToken.substring(0, currToken.length() - 1);
+				if (currToken.equals("\"numPages\":")) {
+					this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 2)); // supports two
+																										// digit
+				} else {
+					currToken = currToken.substring(0, currToken.length() - 1);
+					if (currToken.equals("\"numPages\":")) {
+						this.numPages = Integer.parseInt(tokenBackup.substring(tokenBackup.length() - 3)); // should
+																											// support
+																											// three
+																											// digit,
+																											// but
+																											// haven't
+																											// come
+																											// across a
+																											// 3 digit
+																											// account
 					}
 				}
 			}
@@ -234,32 +256,35 @@ public class User {
 	/**
 	 * Parses the user profile.
 	 */
-	public void parseUser(){
+	public void parseUser() {
 
 		int userOffset = -1;
-		while(this.currentPage <= this.numPages){
+		while (this.currentPage <= this.numPages) {
 
 			try {
-				//Get entire photobucket page.
-				//Need a user agent in order to get the redirect from photobucket.
-				Document photobucketDocument = Jsoup.connect(this.userURL).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").timeout(10000).get();
-				//get all the script tags and put them in the element.
+				// Get entire photobucket page.
+				// Need a user agent in order to get the redirect from photobucket.
+				Document photobucketDocument = Jsoup.connect(this.userURL).userAgent(
+						"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2")
+						.timeout(10000).get();
+				// get all the script tags and put them in the element.
 				Elements photo = photobucketDocument.getElementsByTag("script");
-				//Element script = photo.get(photo.size() - 23); //Magic number. Photobucket loves to change this, but as of 07/2018 this is the offset. 
+				// Element script = photo.get(photo.size() - 23); //Magic number. Photobucket
+				// loves to change this, but as of 07/2018 this is the offset.
 
-				//Automatically calculate the offset to always fetch the correct data.
+				// Automatically calculate the offset to always fetch the correct data.
 				Element script;
-				if (userOffset == -1){
+				if (userOffset == -1) {
 					System.out.print("Calculating Parse Offset...");
 					userOffset += 2;
 					script = photo.get(photo.size() - userOffset);
-					while (!script.html().contains("libraryAlbumsPageCollectionData")){
+					while (!script.html().contains("libraryAlbumsPageCollectionData")) {
 						userOffset++;
 						script = photo.get(photo.size() - userOffset);
 					}
 					System.out.println(userOffset);
 				}
-				
+
 				System.out.println("BEGINING PAGE " + currentPage + " OF " + numPages);
 
 				script = photo.get(photo.size() - userOffset);
@@ -267,36 +292,40 @@ public class User {
 				String httpParse = "http://";
 				String selection = script.toString();
 				ArrayList<String> photoLinkList = new ArrayList<String>();
-				StringBuilder losLinks = new StringBuilder(); //kachow
+				StringBuilder losLinks = new StringBuilder(); // kachow
 
-				//parse links
+				// parse links
 
-				StringTokenizer tokenizer = new StringTokenizer(selection, "\\/"); //use \/ as the delimiter. 
+				StringTokenizer tokenizer = new StringTokenizer(selection, "\\/"); // use \/ as the delimiter.
 				String currentToken = "";
 				String previousToken = "";
 				String imageURL = "";
-				while (tokenizer.hasMoreTokens()){
+				while (tokenizer.hasMoreTokens()) {
 					previousToken = currentToken;
 					currentToken = tokenizer.nextToken();
-					losLinks.setLength(0); //clear string builder
+					losLinks.setLength(0); // clear string builder
 
-					if (currentToken.equals("albums")){
+					if (currentToken.equals("albums")) {
 						losLinks.append(httpParse + previousToken + "/" + currentToken + "/");
-						losLinks.append(tokenizer.nextToken() + "/" + tokenizer.nextToken() + "/" + tokenizer.nextToken());
+						losLinks.append(
+								tokenizer.nextToken() + "/" + tokenizer.nextToken() + "/" + tokenizer.nextToken());
 
-						//clean up
+						// clean up
 						char prev = ' ';
 						char cur = ' ';
 						int counter = 0;
-						for (char a : losLinks.toString().toCharArray()){
+						for (char a : losLinks.toString().toCharArray()) {
 							cur = a;
-							if (cur == 'g' && prev == 'e' || cur == 'g' && prev == 'p' || cur == 'f' && prev == 'i' || cur == 'g' && prev == 'n' || cur == '4' && prev == 'p'){ //for jpeg, jpg, gif, png, and mp4.
-								//there's a bug in this. if a username is **eg, pg, if, etc... the link is cut off right there. TODO: Fix this.							
+							if (cur == 'g' && prev == 'e' || cur == 'g' && prev == 'p' || cur == 'f' && prev == 'i'
+									|| cur == 'g' && prev == 'n' || cur == '4' && prev == 'p') { // for jpeg, jpg, gif,
+																									// png, and mp4.
+								// there's a bug in this. if a username is **eg, pg, if, etc... the link is cut
+								// off right there. TODO: Fix this.
 								imageURL = losLinks.toString().substring(0, counter + 1);
-								if (photoLinkList.isEmpty()){ //prevent an index out of bounds exception below by checking before trying to access.
+								if (photoLinkList.isEmpty()) { // prevent an index out of bounds exception below by
+																// checking before trying to access.
 									photoLinkList.add(imageURL);
-								}
-								else if (!imageURL.equals(photoLinkList.get(photoLinkList.size() - 1))){
+								} else if (!imageURL.equals(photoLinkList.get(photoLinkList.size() - 1))) {
 									photoLinkList.add(imageURL);
 								}
 								break;
@@ -310,62 +339,86 @@ public class User {
 
 				}
 
-				if (!photoLinkList.isEmpty()){
-					//Remove last link of the of the photoLinkList because it is garbage.
+				if (!photoLinkList.isEmpty()) {
+					// Remove last link of the of the photoLinkList because it is garbage.
 					photoLinkList.remove(photoLinkList.size() - 1);
 				}
 
-				//Begin Saving Files.
+				// Begin Saving Files.
 				File outputFile, directory;
-				float modCount = 1; //use modcount in an attempt to reduce duplicate photos, will use a float in case there are lots of images.
-				for (String s : photoLinkList){
+				float modCount = 1; // use modcount in an attempt to reduce duplicate photos, will use a float in
+									// case there are lots of images.
+				for (String s : photoLinkList) {
 					URL photoURL = new URL(s);
-					if (modCount % this.TOLERANCE != 0){
-						//Do nothing.
-					}
-					else{
-						try{
-							BufferedImage photoJoto = ImageIO.read(photoURL);
+					if (modCount % this.TOLERANCE != 0) {
+						// Do nothing.
+					} else {
+						try {
+							InputStream is = photoURL.openStream();
+							BufferedImage photoJoto = ImageIO.read(is);
+							// TODO: Fix Image Saving
+							if (photoJoto == null) {
+								if (photoURL.toString().contains("http")) {
+									System.out.println("Photo issue. The issue may be caused by Photobucket.");
+									System.out.println("URL obtained appears to be valid:");
+									System.out.println(photoURL.toString());
+									System.out.println("PhotobucketMiner may need an update.");
+								} else {
+									System.err.println("Photo issue.");
+									System.err.println("URL obtained appears to be invalid:");
+									System.err.println(photoURL.toString());
+									System.err.println("PhotobucketMiner may need an update.");
+								}
+								System.exit(0);
+							}
+
 							directory = new File("Saved_Users\\");
 							directory.mkdir();
 							directory = new File("Saved_Users\\" + this.username + "\\");
 							directory.mkdir();
-							//Differentiate between file types. Could download pngs and static gifs as jpg, but some are discolored when you don't differentiate.
-							if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("png")){
-								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".png");					
-								ImageIO.write(photoJoto,"png", outputFile);
-							}
-							else if (photoURL.toString().substring(photoURL.toString().length() - 3, photoURL.toString().length()).equals("gif")){
-								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".gif");					
-								ImageIO.write(photoJoto,"gif", outputFile);
-							}
-							else{ //if not a png or gif, must be a jpg or jpeg.
-								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");					
-								ImageIO.write(photoJoto,"jpg", outputFile);
+							// Differentiate between file types. Could download pngs and static gifs as jpg,
+							// but some are discolored when you don't differentiate.
+							if (photoURL.toString()
+									.substring(photoURL.toString().length() - 3, photoURL.toString().length())
+									.equals("png")) {
+								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".png");
+								ImageIO.write(photoJoto, "png", outputFile);
+							} else if (photoURL.toString()
+									.substring(photoURL.toString().length() - 3, photoURL.toString().length())
+									.equals("gif")) {
+								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".gif");
+								ImageIO.write(photoJoto, "gif", outputFile);
+							} else { // if not a png or gif, must be a jpg or jpeg.
+								outputFile = new File("Saved_Users\\" + this.username + "\\" + this.numeral + ".jpg");
+								System.out.println("made it here");
+								ImageIO.write(photoJoto, "jpg", outputFile);
 							}
 
-							//Check if flag is set and analyze image if so...
-							if (SSCFlag){
+							// Check if flag is set and analyze image if so...
+							if (SSCFlag) {
 								ImageAnalyzer ia = new ImageAnalyzer(outputFile);
-								if (ia.isSSN()){
+								if (ia.isSSN()) {
 									imagesOfInterest.add("POSSIBLE MATCH: " + outputFile.toString());
-								}
-								else if (ia.isBetwixt){
+								} else if (ia.isBetwixt) {
 									imagesOfInterest.add("UNSURE: " + outputFile.toString());
 								}
 							}
 
-							this.numeral++; //prevent a bug that overwrites file by making numeral a global variable.
+							this.numeral++; // prevent a bug that overwrites file by making numeral a global variable.
 							System.out.println("SAVED: " + s);
-						} catch(Exception e){
-							//catch the exception that is thrown by some bad duplicate URLs that redirect you.
+						} catch (Exception e) {
+							System.out.println(e);
+							// catch the exception that is thrown by some bad duplicate URLs that redirect
+							// you.
 						}
 					}
 					modCount++;
 				}
 
-				//Separate links to the same pictures are being produced. This is because the HTML has multiple links to the same picture, so they're all being parsed.
-				//Because separate links to the same pictures are being produced, it makes it hard to compare and determine which are duplicates.
+				// Separate links to the same pictures are being produced. This is because the
+				// HTML has multiple links to the same picture, so they're all being parsed.
+				// Because separate links to the same pictures are being produced, it makes it
+				// hard to compare and determine which are duplicates.
 
 			} catch (IOException e) {
 				System.err.println("User Connection Error.");
