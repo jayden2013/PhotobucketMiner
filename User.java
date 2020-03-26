@@ -362,12 +362,14 @@ public class User {
 							 * Photobucket sends WebP now instead of other image formats, unless explicitly
 							 * told to do so. WebP is incompatible with the way we save images. Set User
 							 * Agent to IE 5.5, which does not support WebP format. Set Accept Property to
-							 * compatible image formats.
+							 * compatible image formats. Set Referer Property to photobucket.com, so that
+							 * images can be downloaded without a watermark.
 							 */
 							connection.setRequestProperty("User-Agent",
 									"Mozilla/4.0 (compatible; MSIE 5.5; AOL 5.0; Windows 95)");
 							connection.setRequestProperty("Accept",
 									"image/jpg, image/jpeg, image/gif, image/png, image/bmp");
+							connection.setRequestProperty("Referer", "http://s.photobucket.com/");
 
 							InputStream is = connection.getInputStream();
 							BufferedImage photoJoto = ImageIO.read(is);
