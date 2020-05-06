@@ -2,6 +2,9 @@
 Parses and downloads Photobucket's recent uploads and the profiles of the recent uploaders. Specific users can be targeted, and images with certain properties can be targeted.
 
 # Limitations
+
+#####May 2020: Photobucket removed their recent uploads page. Running RecentUploads will pull the accounts of users who uploaded with the text "recent".
+
 Currently, only photos that aren't inside of a directory can be pulled and saved. This will be addressed in future versions.  
 
 # Usage
